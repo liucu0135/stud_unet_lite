@@ -68,7 +68,7 @@ for epoch in range(total_epochs):
 
             # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
             # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            acc_gan.append(net.accuracy_gan())
+            # acc_gan.append(net.accuracy_gan())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
@@ -94,7 +94,7 @@ for epoch in range(total_epochs):
     if epoch%50==0:
         save_path = './checkpoints/' + 'all' + '/self_sup/net_ss_nm{}.path'.format(epoch//50)
         net.save_net(save_path)
-    if epoch % 10 == 1:
+    if (epoch+1) % 10 == 0:
         gl = torch.mean(torch.stack(train_loss_g))
         dl = torch.mean(torch.stack(train_loss_d))
         nml = torch.mean(torch.stack(train_loss_mn))
@@ -107,7 +107,7 @@ for epoch in range(total_epochs):
         acc = torch.mean(torch.stack(acc_c))
         mine = nml + ril
         print(
-            "ep:{}, D_l:{:1f}, G_l:{:1f}, nm_l:{:1f}, ri_l:{:1f}, rip_l:{:1f},acc_rip:{:1f},acc_ri:{:1f}, acc_nm:{:1f}, acc_g:{:1f}, acc_c:{:1f}".format(
+            "ep:{}, D_l:{:.3f}, G_l:{:.3f}, nm_l:{:.3f}, ri_l:{:.3f}, rip_l:{:.3f},acc_rip:{:.3f},acc_ri:{:.3f}, acc_nm:{:.3f}, acc_g:{:.3f}, acc_c:{:.3f}".format(
                 epoch, dl, gl,
                 nml, ril,ripl, acrp,acr, acn, acg, acc))
     # if epoch % 20 == 0:

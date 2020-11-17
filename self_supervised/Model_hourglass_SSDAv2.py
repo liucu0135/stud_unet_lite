@@ -248,7 +248,7 @@ class SUNET(nn.Module):
             self.opt_dics = optim.Adam(self.disc.parameters(), lr=0.001)
             self.opt_ext = optim.Adam(self.extractor.parameters(), lr=0.001)
             self.opt_dec = optim.Adam(self.decoder.parameters(), lr=0.001)
-            self.scheduler_dec = StepLR(self.opt_dec, step_size=1, gamma=0.5)
+            self.scheduler_dec = StepLR(self.opt_dec, step_size=1, gamma=1)
             self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
         else:
             if self.ff:
