@@ -78,7 +78,7 @@ class Decoder(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, out_ch=3, bn=False,para_reduce=1):
         super(Discriminator, self).__init__()
-        self.E1 = Rse_block(1152, 64, bn=bn)
+        self.E1 = Rse_block(1152*4//para_reduce, 64, bn=bn)
         self.f1 = nn.Linear(64 * 5 * 5, 64//para_reduce)
         # self.dr=nn.Dropout(0.5)
         self.f2 = nn.Linear(64//para_reduce, 2)
@@ -140,7 +140,7 @@ class Classifier(nn.Module):
 class Sorter(nn.Module):
     def __init__(self, out_ch=3, num_perm=2, bn=False, para_reduce=1):
         super(Sorter, self).__init__()
-        self.E1 = Rse_block(1152, 64, bn=bn)
+        self.E1 = Rse_block(1152*4//para_reduce, 64, bn=bn)
         # self.E1 = Rse_block(512//para_reduce, 256//para_reduce, bn=bn)
         # self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
         # self.E3 = Rse_block(128//para_reduce, 64, bn=bn)
