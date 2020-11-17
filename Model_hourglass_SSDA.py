@@ -260,17 +260,20 @@ class SUNET(nn.Module):
     def forward(self, data, ss=True, g=True):
         # data 0, 1, 2:   normal map, corresponding raw image, another unlabeled raw image
         if ss:
+            #  self-supervised
             if g:
+                # for pretext task loss
                 self.input_nm = data[0][0].cuda()
                 self.rec_label_nm = data[0][1].cuda()
-                self.input_ri = data[2][0].cuda()
-                self.rec_label_ri = data[2][1].cuda()
+                self.input_ri = data[1][0].cuda()
+                self.rec_label_ri = data[1][1].cuda()
                 _, _, _, e4_nm = self.extractor(self.input_nm)
                 _, _, _, e4_ri = self.extractor(self.input_ri)
                 self.recon_nm = self.decoder(_, _, _, e4_nm)
                 self.recon_ri = self.decoder(_, _, _, e4_ri)
 
             else:
+                # for adversarial loss
                 self.input_ri = data[1][0].cuda()
                 self.input_nm = data[0][0].cuda()
                 e1_nm, e2_nm, e3_nm, e4_nm = self.extractor(self.input_nm)
