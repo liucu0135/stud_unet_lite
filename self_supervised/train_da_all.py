@@ -51,7 +51,7 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%10<0:
+        if i%10<5:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
@@ -66,8 +66,8 @@ for epoch in range(total_epochs):
             acc_rip.append(net.accuracy(domain='rip'))
             acc_nm.append(net.accuracy(domain='nm'))
 
-            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
             acc_gan.append(net.accuracy_gan())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
