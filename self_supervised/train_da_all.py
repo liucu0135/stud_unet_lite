@@ -19,13 +19,13 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-# stud_names = ['Nut_stud']
-stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+stud_names = ['Nut_stud']
+# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
 torch.cuda.empty_cache()
-net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=True, para_reduce=4).cuda()
+net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=False, para_reduce=4).cuda()
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
@@ -92,7 +92,7 @@ for epoch in range(total_epochs):
 
 
     if epoch%50==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_ssmu_nm{}.path'.format(epoch//50)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_ss_nm{}.path'.format(epoch//50)
         net.save_net(save_path)
     if epoch % 10 == 1:
         gl = torch.mean(torch.stack(train_loss_g))
