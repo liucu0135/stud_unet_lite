@@ -26,10 +26,10 @@ stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 
 torch.cuda.empty_cache()
 net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=True, para_reduce=4).cuda()
-path_train=['../mat/' + name + '/stud_data_train.mat' for name in stud_names]
-path_test=['../mat/' + name + '/stud_data_test.mat' for name in stud_names]
-path_train_ri=['../mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
-path_test_ri=['../mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
+path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
+path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
+path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
+path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
 md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=30, puzzle_num=num_puzzle, more_ri=True)
 train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True)
 load=False
