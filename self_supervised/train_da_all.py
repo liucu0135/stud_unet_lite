@@ -19,7 +19,7 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-stud_names = ['stud']
+stud_names = ['Nut_stud']
 # stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
@@ -56,7 +56,7 @@ for epoch in range(total_epochs):
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=True,multi=False)
+            net.update_g(ss_only=False,multi=False)
             train_loss_g.append(net.Loss_g.detach().cpu())
             acc_c.append(net.accuracy_class())
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
