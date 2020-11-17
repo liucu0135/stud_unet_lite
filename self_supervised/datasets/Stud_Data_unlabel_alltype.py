@@ -98,6 +98,7 @@ class myDataset_unlabel(Data.Dataset):
         else:
             edge = 10
         stride = (puzzle.shape[1] - edge * 2) // puzzle_num-edge//2
+        puzzle_list=[]
         for i in range(puzzle_num*puzzle_num):
             giggle=int(((np.random.rand()+1)*edge)//8)
             giggle2=int(((np.random.rand()+1)*edge)//8)
@@ -105,16 +106,16 @@ class myDataset_unlabel(Data.Dataset):
             row = (i - col) // puzzle_num
             tcol = idxs[i] % puzzle_num
             trow = (idxs[i] - tcol) // puzzle_num
+            puzzle_img=input[:,edge + row * stride+giggle2:edge + row * stride + stride+giggle2, edge + col * stride+giggle:edge + col * stride + stride+giggle]
+            puzzle_list.append(puzzle_img)
             puzzle[:, edge//2 + trow * (stride+edge)+giggle:edge//2 + trow * (stride+edge) + stride+giggle,
-            edge//2 + tcol * (stride+edge)+giggle2:edge//2 + tcol * (stride+edge) + stride+giggle2] = input[:,
-                                                                  edge + row * stride+giggle2:edge + row * stride + stride+giggle2,
-                                                                  edge + col * stride+giggle:edge + col * stride + stride+giggle]
+            edge//2 + tcol * (stride+edge)+giggle2:edge//2 + tcol * (stride+edge) + stride+giggle2] =puzzle_img
 
 
         if self.original_img:
             return puzzle, int(self.perm_id), int(type), input, output
         else:
-            return puzzle, int(self.perm_id)
+            return puzzle, int(self.perm_id), puzzle_list
 
 
 def read_input(filepath, key, s):

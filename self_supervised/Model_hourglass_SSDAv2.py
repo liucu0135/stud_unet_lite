@@ -28,12 +28,12 @@ class Extractor(nn.Module):
         #         self.E4.parameters()), lr=0.001)
 
     def forward(self, input, ri=False):
-
         e1 = self.E1(input)
         e2 = self.E2(e1)
         e3 = self.E3(e2)
         e4 = self.E4(e3)
-        return e1, e2, e3, e4
+        # return e1, e2, e3, e4
+        return e4
 
 
 class Compensator(nn.Module):
@@ -78,26 +78,20 @@ class Decoder(nn.Module):
 class Discriminator(nn.Module):
     def __init__(self, out_ch=3, bn=False,para_reduce=1):
         super(Discriminator, self).__init__()
-        # layers = [Rse_block(512+256, 128, bn=True, single=True),
-        #           Rse_block(128, 64, bn=True, single=True),
-        #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block((512)//para_reduce, 64//para_reduce, bn=bn, single=True),
-                  Rse_block(64//para_reduce, 32//para_reduce, bn=bn, single=True),
-                  Rse_block(32//para_reduce, 8, bn=bn, single=True)]
-        # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
-        # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
-        self.f1 = nn.Linear(8 * 5 * 5, 64//para_reduce)
+        self.E1 = Rse_block(1152, 64, bn=bn)
+        self.f1 = nn.Linear(64 * 5 * 5, 64//para_reduce)
+        # self.dr=nn.Dropout(0.5)
         self.f2 = nn.Linear(64//para_reduce, 2)
-        self.clasifier = nn.Sequential(*layers)
+        # self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
 
-    def forward(self, e1, e2, e3, e4):
+    def forward(self,e4):
         # e = self.E2(e2)
         # e = torch.cat((e, e3), dim=1)
         # e = self.E3(e)
         # e = torch.cat((e, e4), dim=1)
-        e = self.clasifier(e4)
-        e = self.f1(e.view(-1, 8 * 5 * 5))
+        e = self.E1(e4)
+        e = self.f1(e.view(-1, 64 * 5 * 5))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
@@ -144,11 +138,12 @@ class Classifier(nn.Module):
 
 
 class Sorter(nn.Module):
-    def __init__(self, out_ch=3, num_perm=2, bn=True, para_reduce=1):
+    def __init__(self, out_ch=3, num_perm=2, bn=False, para_reduce=1):
         super(Sorter, self).__init__()
-        self.E1 = Rse_block(512//para_reduce, 256//para_reduce, bn=bn)
-        self.E2 = Rse_block(256//para_reduce, 128//para_reduce, bn=bn)
-        self.E3 = Rse_block(128//para_reduce, 64, bn=bn)
+        self.E1 = Rse_block(1152, 64, bn=bn)
+        # self.E1 = Rse_block(512//para_reduce, 256//para_reduce, bn=bn)
+        # self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
+        # self.E3 = Rse_block(128//para_reduce, 64, bn=bn)
         self.f1 = nn.Linear(64 * 5 * 5, 512//para_reduce)
         self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
         self.f3 = nn.Linear(256//para_reduce, num_perm)
@@ -156,10 +151,10 @@ class Sorter(nn.Module):
         # self.E5 = nn.Conv2d(32, num_perm, kernel_size=[2,2], stride=1, padding=0)
         self.num_perm = num_perm
 
-    def forward(self, e1, e2, e3, e4):
+    def forward(self,e4):
         e = self.E1(e4)
-        e = self.E2(e)
-        e = self.E3(e)
+        # e = self.E2(e)
+        # e = self.E3(e)
         e = self.f1(e.view(-1, 64 * 5 * 5))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
@@ -279,29 +274,42 @@ class SUNET(nn.Module):
 
 
     def forward(self, data, ss=True, g=True):
-        # data 0, 1, 2:   normal map, corresponding raw image, another unlabeled raw image
         if ss:
-            self.input_nm = data[0][0].cuda()
+            # cuda input data
+            # self.input_nm = data[0][0].cuda()
+            self.inputs_nm = data[0][2]
             self.rec_label_nm = data[0][1].cuda()
-            self.input_rip = data[2][0].cuda()
+            # self.input_rip = data[2][0].cuda()
+            self.inputs_rip = data[2][2]
             self.rec_label_rip = data[2][1].cuda()
-            self.input_ri = data[1][0].cuda()
+            # self.input_ri = data[1][0].cuda()
+            self.inputs_ri = data[1][2]
             self.rec_label_ri = data[1][1].cuda()
-            _, _, e3_nm, e4_nm = self.extractor(self.input_nm)
-            _, _, _, e4_rip = self.extractor(self.input_rip)
-            _, _, _, e4_ri = self.extractor(self.input_ri)
-            self.recon_nm = self.decoder(_, _, _, e4_nm)
-            self.recon_rip = self.decoder(_, _, _, e4_rip)
-            self.recon_ri = self.decoder(_, _, _, e4_ri)
-            if self.multi:
-                self.c_pre=self.classifier(_, _, e3_nm, e4_nm)
-                self.c_label = data[0][2].cuda()
+
+
+            # forward-pass images to features
+            e4_nm=[]
+            e4_rip=[]
+            e4_ri=[]
+            for i in range(self.num_puzzle):
+                e4_nm.append(self.extractor(self.inputs_nm[i].cuda()))
+                e4_rip.append(self.extractor(self.inputs_rip[i].cuda()))
+                e4_ri.append(self.extractor(self.inputs_ri[i].cuda()))
+            e4_nm=torch.cat(e4_nm,dim=1)
+            e4_ri=torch.cat(e4_ri,dim=1)
+            e4_rip=torch.cat(e4_rip,dim=1)
+
+
+            # cls for sorting
+            self.recon_nm = self.decoder(e4_nm)
+            self.recon_rip = self.decoder(e4_rip)
+            self.recon_ri = self.decoder(e4_ri)
 
             # self.input_nm = data[0][0].cuda()
             # e1_nm, e2_nm, e3_nm, e4_nm = self.extractor(self.input_nm)
 
 
-            self.d_pre = torch.cat((self.disc(_, _, _, e4_nm), self.disc(_, _, _, e4_ri)),
+            self.d_pre = torch.cat((self.disc(e4_nm), self.disc(e4_ri)),
                                    dim=0)
             self.d_label = torch.cat(
                 (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
