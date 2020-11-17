@@ -56,7 +56,7 @@ for epoch in range(total_epochs):
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=True,multi=True)
+            net.update_g(ss_only=True,multi=False)
             # train_loss_g.append(net.Loss_g.detach().cpu())
             acc_c.append(net.accuracy_class())
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
