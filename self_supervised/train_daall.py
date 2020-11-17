@@ -1,12 +1,12 @@
-from Stud_Data import myDataset
-from Stud_Data_unlabel_ri import myDataset_unlabel
+# from Stud_Data import myDataset
+# from Stud_Data_unlabel_ri import myDataset_unlabel
 from Stud_Data_Conbine import myDataset
 from Model_hourglass_SSDA import SUNET
 import torch.utils.data as Data
 import torch
-import numpy as np
-from torch.utils.data.sampler import SubsetRandomSampler
-import time
+# import numpy as np
+# from torch.utils.data.sampler import SubsetRandomSampler
+# import time
 
 # stud  sample rate 50  spervised: nm only  6.0
 # stud  sample rate 50  spervised: ri only  5.9
