@@ -41,7 +41,7 @@ from datasets.Stud_Data_alltype import myDataset
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 500
+total_epochs = 200
 print_inter = 10
 vali_inter = 200
 validation_split = 0.2
