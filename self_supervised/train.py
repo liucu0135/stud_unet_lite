@@ -1,5 +1,7 @@
-from Model_hourglass_SSDA import SUNET
-from Stud_Data_alltype import myDataset
+
+from datasets.Stud_Data_alltype import myDataset
+
+from Model_hourglass_SSDAv2 import SUNET
 from Stud_Data_unlabel import myDataset_unlabel
 # from Model_hourglass_SS import SUNET
 import torch.utils.data as Data
@@ -46,8 +48,8 @@ print_inter = 10
 vali_inter = 200
 validation_split = 0.2
 shuffle_dataset = True
-# stud_names = ['Nut_stud']
-stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
+stud_names = ['stud']
+# stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
 
 #  10.17  10.22  1.92  4.59  7.65
@@ -58,8 +60,11 @@ stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.34  11.36  2.3 4.5  6.4  bn, batch=16
 tl = []
 # for save_id in range(10):
+
+path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
+path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 for name in stud_names:
-    save_id=3
+    save_id=9
     # name='Nut_stud'
     mine = 100
     torch.cuda.empty_cache()
@@ -71,15 +76,15 @@ for name in stud_names:
     sample_rate=10
     if name == 'stud':
         sample_rate=40
-    md_train = myDataset('./mat/' + name + '/stud_data_train.mat', aug=True, inch=3, sample_rate=sample_rate)
+    md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
-    md_test = myDataset('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
+    md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
     load=True
-    net = SUNET(in_ch=3, out_ch=2, ss=False, small_lr=load).cuda()
+    net = SUNET(in_ch=3, out_ch=2, ss=False).cuda()
     if load:
         load_path = './checkpoints/' + name + '/self_sup/net_ss_nm{}.path'.format(save_id)
-        net.load_net(load_path, ext_only=True)
+        net.load_net(load_path, ext_only=True, train_ext=False)
         # net.load_net(save_path, ext_only=False)
 
 

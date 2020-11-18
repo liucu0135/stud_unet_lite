@@ -233,7 +233,7 @@ class Regressor_ff(nn.Module):
 
 
 class SUNET(nn.Module):
-    def __init__(self, in_ch=3, out_ch=2, ss=True, num_puzzle=9, scale_lr=1, multitask=False, para_reduce=1, ff=False, train_ext=False):
+    def __init__(self, in_ch=3, out_ch=2, ss=True, num_puzzle=9, scale_lr=1, multitask=False, para_reduce=1, ff=False, train_ext=True):
         super(SUNET, self).__init__()
         self.in_ch = in_ch
         self.out_ch = out_ch
@@ -266,15 +266,16 @@ class SUNET(nn.Module):
             # paras2=list(self.extractor.E4.parameters())+list(self.regressor.parameters())
             paras2=list(self.regressor.parameters())
             # self.opt_ext = optim.Adam(paras, lr=0.00001)
-            if not scale_lr==1:
+            if train_ext:
                 # self.opt_ext = optim.Adam(paras1, lr=0.001*scale_lr*train_ext)
-                self.opt_ext = optim.Adam(paras1, lr=0)
+                self.opt_ext = optim.Adam(paras1, lr=0.001)
                 self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
-                self.opt_reg = optim.Adam(paras2, lr=0.001*scale_lr)
+                self.opt_reg = optim.Adam(paras2, lr=0.001)
             else:
-                self.opt_ext = optim.Adam(self.extractor.parameters(), lr=0.001)
+                self.opt_ext = optim.Adam(self.extractor.parameters(), lr=0)
                 self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
                 self.opt_reg = optim.Adam(self.regressor.parameters(), lr=0.001, weight_decay=0.005)
+
             self.scheduler_reg = StepLR(self.opt_reg, step_size=1, gamma=0.5)
 
 
