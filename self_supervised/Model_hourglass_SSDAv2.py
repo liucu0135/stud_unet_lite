@@ -81,12 +81,12 @@ class Discriminator(nn.Module):
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block((512)//para_reduce, 64//para_reduce, bn=bn, single=True),
-                  Rse_block(64//para_reduce, 32//para_reduce, bn=bn, single=True),
-                  Rse_block(32//para_reduce, 8, bn=bn, single=True)]
+        layers = [Rse_block((512)//para_reduce*9, 64//para_reduce, bn=bn, single=True),
+                  # Rse_block(64//para_reduce, 32//para_reduce, bn=bn, single=True),
+                  Rse_block(64//para_reduce, 64, bn=bn, single=True)]
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
-        self.f1 = nn.Linear(8 * 2 * 2, 64//para_reduce)
+        self.f1 = nn.Linear(64 * 1 * 1, 64//para_reduce)
         self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
@@ -97,7 +97,7 @@ class Discriminator(nn.Module):
         # e = self.E3(e)
         # e = torch.cat((e, e4), dim=1)
         e = self.clasifier(e4)
-        e = self.f1(e.view(-1, 8 * 2 * 2))
+        e = self.f1(e.view(-1, 64 * 1 * 1))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
@@ -146,10 +146,10 @@ class Classifier(nn.Module):
 class Sorter(nn.Module):
     def __init__(self, out_ch=3, num_perm=2, bn=True, para_reduce=1):
         super(Sorter, self).__init__()
-        self.E1 = Rse_block(512//para_reduce, 256//para_reduce, bn=bn)
+        self.E1 = Rse_block(512//para_reduce*9, 64, bn=bn)
         self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
         self.E3 = Rse_block(64, 64, bn=bn)
-        self.f1 = nn.Linear(64 * 5 * 5, 512//para_reduce)
+        self.f1 = nn.Linear(64 * 3 * 3, 512//para_reduce)
         self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
         self.f3 = nn.Linear(256//para_reduce, num_perm)
         # self.E4 = Rse_block(64, 32, bn=bn)
@@ -158,9 +158,9 @@ class Sorter(nn.Module):
 
     def forward(self, e1, e2, e3, e4):
         e = self.E1(e4)
-        e = self.E2(e)
+        # e = self.E2(e)
         # e = self.E3(e)
-        e = self.f1(e.view(-1, 64 * 5 * 5))
+        e = self.f1(e.view(-1, 64 * 3* 3))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.relu(e)
@@ -279,23 +279,35 @@ class SUNET(nn.Module):
             self.scheduler_reg = StepLR(self.opt_reg, step_size=1, gamma=0.5)
 
 
-    def forward(self, data, ss=True, g=True):
+    def forward(self, data, ss=True, ss_only=False):
         # data 0, 1, 2:   normal map, corresponding raw image, another unlabeled raw image
         if ss:
-            self.input_nm = data[0][0].cuda()
+            self.input_nm = data[0][-1]
             self.rec_label_nm = data[0][1].cuda()
-            self.input_rip = data[2][0].cuda()
+            self.input_rip = data[2][-1]
             self.rec_label_rip = data[2][1].cuda()
-            self.input_ri = data[1][0].cuda()
+            self.input_ri = data[1][-1]
             self.rec_label_ri = data[1][1].cuda()
-            _, _, e3_nm, e4_nm = self.extractor(self.input_nm)
-            _, _, _, e4_rip = self.extractor(self.input_rip)
-            _, _, _, e4_ri = self.extractor(self.input_ri)
+
+            e4_nm=[self.extractor(data_in.cuda())[3] for data_in in self.input_nm ]
+            e4_rip=[self.extractor(data_in.cuda())[3] for data_in in self.input_rip ]
+            e4_ri=[self.extractor(data_in.cuda())[3] for data_in in self.input_ri ]
+
+            e4_nm=torch.cat(e4_nm, dim=1)
+            e4_rip=torch.cat(e4_rip, dim=1)
+            e4_ri=torch.cat(e4_ri, dim=1)
+
+
+            # _, _, _, e4_nm = self.extractor(self.input_nm)
+            # _, _, _, e4_rip = self.extractor(self.input_rip)
+            # _, _, _, e4_ri = self.extractor(self.input_ri)
+            _=None
+
             self.recon_nm = self.decoder(_, _, _, e4_nm)
             self.recon_rip = self.decoder(_, _, _, e4_rip)
             self.recon_ri = self.decoder(_, _, _, e4_ri)
             if self.multi:
-                self.c_pre=self.classifier(_, _, e3_nm, e4_nm)
+                self.c_pre=self.classifier(_, _, _, e4_nm)
                 self.c_label = data[0][2].cuda()
 
             # self.input_nm = data[0][0].cuda()

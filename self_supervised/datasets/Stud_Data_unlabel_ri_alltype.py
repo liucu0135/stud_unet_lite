@@ -136,7 +136,7 @@ class myDataset_unlabel(Data.Dataset):
             # edge + tcol * stride:edge + tcol * stride + stride] = input[:,
             #                                                       edge + row * stride:edge + row * stride + stride,
             #                                                       edge + col * stride:edge + col * stride + stride]
-            puzzle_img = input[:, edge + row * stride + giggle2:edge + row * stride + stride + giggle2,
+            puzzle_img = puzzle[:, edge + row * stride + giggle2:edge + row * stride + stride + giggle2,
                          edge + col * stride + giggle:edge + col * stride + stride + giggle]
             puzzle_list.append(puzzle_img)
             puzzle[:, edge // 2 + trow * (stride + edge) + giggle:edge // 2 + trow * (stride + edge) + stride + giggle,
@@ -156,7 +156,7 @@ class myDataset_unlabel(Data.Dataset):
             np.repeat(input, 3, axis=0)
             return puzzle, int(self.perm_id), np.repeat(input, 3, axis=0), output, puzzle_list
         if self.original_img:
-            return puzzle, int(self.perm_id), np.repeat(input,3,axis=0), output
+            return puzzle, int(self.perm_id), np.repeat(input,3,axis=0), output, puzzle_list
         else:
             return puzzle, int(self.perm_id)
 
