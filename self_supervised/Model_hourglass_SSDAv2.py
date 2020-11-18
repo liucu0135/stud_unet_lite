@@ -79,7 +79,7 @@ class Discriminator(nn.Module):
     def __init__(self, out_ch=3, bn=False,para_reduce=1):
         super(Discriminator, self).__init__()
         self.E1 = Rse_block(1152*4//para_reduce, 64, bn=bn)
-        self.f1 = nn.Linear(64 * 5 * 5, 64//para_reduce)
+        self.f1 = nn.Linear(64 * 3 * 3, 64//para_reduce)
         # self.dr=nn.Dropout(0.5)
         self.f2 = nn.Linear(64//para_reduce, 2)
         # self.clasifier = nn.Sequential(*layers)
@@ -91,7 +91,7 @@ class Discriminator(nn.Module):
         # e = self.E3(e)
         # e = torch.cat((e, e4), dim=1)
         e = self.E1(e4)
-        e = self.f1(e.view(-1, 64 * 5 * 5))
+        e = self.f1(e.view(-1, 64 * 3 * 3))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
