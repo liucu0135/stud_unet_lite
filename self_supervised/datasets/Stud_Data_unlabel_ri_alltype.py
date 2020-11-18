@@ -96,6 +96,22 @@ class myDataset_unlabel(Data.Dataset):
         if aug > 1:
             input = np.ascontiguousarray(np.flip(input, 2))
             output = np.ascontiguousarray(np.flip(output, 2))
+
+
+        idp=np.reshape(output[1, :, :],(-1))
+        idp=np.argmax(idp)
+        xp = idp % 160
+        yp = (idp - xp) // 160
+        idp=np.reshape(output[0, :, :],(-1))
+        idp=np.argmax(idp)
+        xp2 = idp % 160
+        yp2 = (idp - xp2) // 160
+        center = [(xp+xp2)//2,(yp+yp2)//2]
+        # center =[xp,yp]
+        center=np.array([c for c in center]).clip(40,120)
+        input=input[:,center[1]-40:center[1]+40,center[0]-40:center[0]+40]
+
+
         puzzle = np.repeat(input.copy(), 3, axis=0)
         puzzle_num = self.puzzle_num
         #puzzle=np.zeros_like(puzzle)  # white back ground

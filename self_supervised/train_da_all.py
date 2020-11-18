@@ -107,9 +107,9 @@ for epoch in range(total_epochs):
         acc = torch.mean(torch.stack(acc_c))
         mine = nml + ril
         print(
-            "ep:{}, D_l:{:1f}, G_l:{:1f}, nm_l:{:1f}, ri_l:{:1f}, rip_l:{:1f},acc_rip:{:1f},acc_ri:{:1f}, acc_nm:{:1f}, acc_g:{:1f}, acc_c:{:1f}".format(
+            "ep:{}, D_l:{:.3f}, G_l:{:.3f}, nm_l:{:.3f}, ri_l:{:.3f}, rip_l:{:.3f},acc_rip:{:.3f},acc_ri:{:.3f}, acc_nm:{:.3f}, acc_g:{:.3f}".format(
                 epoch, dl, gl,
-                nml, ril,ripl, acrp,acr, acn, acg, acc))
+                nml, ril,ripl, acrp,acr, acn, acg))
     # if epoch % 20 == 0:
     #     net.LR_decay(ss=True)
 
