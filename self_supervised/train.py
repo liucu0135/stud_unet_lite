@@ -62,7 +62,7 @@ tl = []
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 for name in ['all']:
-    save_id=5
+    save_id=7
     # name='Nut_stud'
     mine = 100
     torch.cuda.empty_cache()
