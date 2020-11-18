@@ -19,8 +19,8 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-stud_names = ['Nut_stud']
-# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+# stud_names = ['Nut_stud']
+stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
@@ -31,7 +31,7 @@ path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
 path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
 md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=30, puzzle_num=num_puzzle, more_ri=True)
-train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True)
+train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=8)
 load=False
 
 # validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
@@ -51,13 +51,13 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%10<0:
+        if i%10<2:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=True,multi=False)
-            # train_loss_g.append(net.Loss_g.detach().cpu())
+            net.update_g(ss_only=False,multi=False)
+            train_loss_g.append(net.Loss_g.detach().cpu())
             acc_c.append(net.accuracy_class())
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
@@ -66,9 +66,9 @@ for epoch in range(total_epochs):
             acc_rip.append(net.accuracy(domain='rip'))
             acc_nm.append(net.accuracy(domain='nm'))
 
-            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            acc_gan.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            # acc_gan.append(net.Loss_rec_nm.detach().cpu())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
