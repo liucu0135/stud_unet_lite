@@ -92,7 +92,7 @@ for epoch in range(total_epochs):
 
 
     if epoch%50==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack{}.path'.format(epoch//50)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly{}.path'.format(epoch//50)
         net.save_net(save_path)
     if epoch % 10 == 1:
         gl = torch.mean(torch.stack(train_loss_g))
