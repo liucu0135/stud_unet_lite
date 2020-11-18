@@ -60,7 +60,6 @@ class myDataset_unlabel(Data.Dataset):
                 item = item0 - self.lens[c - 1]
                 self.input = self.inputs[c - 1]
                 self.output = self.outputs[c - 1]
-                path = self
                 type = c - 1
                 break
 
@@ -72,7 +71,7 @@ class myDataset_unlabel(Data.Dataset):
             input = np.expand_dims(self.input[item, light, :, :], axis=0)
         else:
             input = self.input[item, :, :, :]
-            output = self.output[item, :, :, :]
+        output = self.output[item, :, :, :]
 
         if aug % 2 == 1:
             # plt.imshow(input[0,:,:])
@@ -80,10 +79,30 @@ class myDataset_unlabel(Data.Dataset):
             input = np.ascontiguousarray(np.flip(input, 1))
             if self.inch == 3:
                 input[0, :, :] *= -1
+            output = np.ascontiguousarray(np.flip(output, 1))
         if aug > 1:
             input = np.ascontiguousarray(np.flip(input, 2))
             if self.inch == 3:
                 input[1, :, :] *= -1
+            output = np.ascontiguousarray(np.flip(output, 2))
+
+
+
+
+
+        # recenter the image:
+        idp=np.reshape(output[1, :, :],(-1))
+        idp=np.argmax(idp)
+        xp = idp % 160
+        yp = (idp - xp) // 160
+        idp=np.reshape(output[0, :, :],(-1))
+        idp=np.argmax(idp)
+        xp2 = idp % 160
+        yp2 = (idp - xp2) // 160
+        center = [(xp+xp2)//2,(yp+yp2)//2]
+        # center =[xp,yp]
+        center=np.array([c for c in center]).clip(40,120)
+        input=input[:,center[1]-40:center[1]+40,center[0]-40:center[0]+40]
 
         puzzle = input.copy()
         puzzle_num = self.puzzle_num
@@ -93,14 +112,14 @@ class myDataset_unlabel(Data.Dataset):
         idxs = self.pnc.num2perm(self.perm_id)
         #  hard coded for laziness
         if 'Nut' in self.root_path[type] or 'panel' in self.root_path[type] or 'T' in self.root_path[type]:
-            edge = 10
+            edge = 2
         else:
-            edge = 10
+            edge = 2
         stride = (puzzle.shape[1] - edge * 2) // puzzle_num - edge // 2
         puzzle_list = []
         for i in range(puzzle_num * puzzle_num):
-            giggle = int(((np.random.rand() + 1) * edge) // 8)
-            giggle2 = int(((np.random.rand() + 1) * edge) // 8)
+            giggle = 0#int(((np.random.rand() + 1) * edge) // 8)
+            giggle2 = 0#int(((np.random.rand() + 1) * edge) // 8)
             col = i % puzzle_num
             row = (i - col) // puzzle_num
             tcol = idxs[i] % puzzle_num
@@ -111,6 +130,7 @@ class myDataset_unlabel(Data.Dataset):
             puzzle[:, edge // 2 + trow * (stride + edge) + giggle:edge // 2 + trow * (stride + edge) + stride + giggle,
             edge // 2 + tcol * (stride + edge) + giggle2:edge // 2 + tcol * (
                         stride + edge) + stride + giggle2] = puzzle_img
+        # plt.imshow(np.transpose(input[:,center[1]-40:center[1]+40,center[0]-40:center[0]+40], (1,2,0)))
         # plt.imshow(np.transpose(puzzle, (1,2,0)))
         # plt.show()
         if self.original_img:

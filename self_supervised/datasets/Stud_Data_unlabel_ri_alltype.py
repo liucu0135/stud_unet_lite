@@ -96,6 +96,25 @@ class myDataset_unlabel(Data.Dataset):
         if aug > 1:
             input = np.ascontiguousarray(np.flip(input, 2))
             output = np.ascontiguousarray(np.flip(output, 2))
+
+
+
+        idp=np.reshape(output[1, :, :],(-1))
+        idp=np.argmax(idp)
+        xp = idp % 160
+        yp = (idp - xp) // 160
+        idp=np.reshape(output[0, :, :],(-1))
+        idp=np.argmax(idp)
+        xp2 = idp % 160
+        yp2 = (idp - xp2) // 160
+        center = [(xp+xp2)//2,(yp+yp2)//2]
+        # center =[xp,yp]
+        center=np.array([c for c in center]).clip(40,120)
+        input=input[:,center[1]-40:center[1]+40,center[0]-40:center[0]+40]
+
+
+
+
         puzzle = np.repeat(input.copy(), 3, axis=0)
         puzzle_num = self.puzzle_num
         #puzzle=np.zeros_like(puzzle)  # white back ground
@@ -105,14 +124,14 @@ class myDataset_unlabel(Data.Dataset):
         #  hard coded for laziness
 
         if 'Nut' in self.root_path[type] or 'panel' in self.root_path[type] or 'T' in self.root_path[type]:
-            edge = 10
+            edge = 2
         else:
-            edge = 10
+            edge = 2
         stride = (puzzle.shape[1] - edge * 2) // puzzle_num-edge//2
         puzzle_list = []
         for i in range(puzzle_num*puzzle_num):
-            giggle=int(((np.random.rand()+1)*edge)//8)
-            giggle2=int(((np.random.rand()+1)*edge)//8)
+            giggle=0#int(((np.random.rand()+1)*edge)//8)
+            giggle2=0#int(((np.random.rand()+1)*edge)//8)
             col = i % puzzle_num
             row = (i - col) // puzzle_num
             tcol = idxs[i] % puzzle_num
@@ -125,12 +144,8 @@ class myDataset_unlabel(Data.Dataset):
             puzzle_list.append(np.repeat(puzzle_img, 3, axis=0))
             puzzle[:, edge//2 + trow * (stride+edge)+giggle:edge//2 + trow * (stride+edge) + stride+giggle,
             edge//2 + tcol * (stride+edge)+giggle2:edge//2 + tcol * (stride+edge) + stride+giggle2] =puzzle_img
-        # plt.subplot(2,1,1)
-        # plt.imshow(puzzle[0,:,:])
-        # plt.subplot(2,1,2)
-        # plt.imshow(input.squeeze())
+        # plt.imshow(np.transpose(puzzle, (1,2,0)))
         # plt.show()
-        # print(self.perm_id)
         if self.more_ri:
             idx=np.random.randint(self.len)
             input = np.expand_dims(self.input[idx, np.random.randint(self.img_num), :, :], axis=0)
