@@ -272,7 +272,7 @@ class SUNET(nn.Module):
                 self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
                 self.opt_reg = optim.Adam(paras2, lr=0.001)
             else:
-                self.opt_ext = optim.Adam(self.extractor.parameters(), lr=0)
+                self.opt_ext = optim.Adam(self.extractor.parameters(), lr=0.00001)
                 self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
                 self.opt_reg = optim.Adam(self.regressor.parameters(), lr=0.001, weight_decay=0.005)
 
