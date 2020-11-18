@@ -81,7 +81,7 @@ class Discriminator(nn.Module):
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block((512)//para_reduce*9, 64//para_reduce, bn=bn, single=True),
+        layers = [Rse_block((512)//para_reduce*4, 64//para_reduce, bn=bn, single=True),
                   # Rse_block(64//para_reduce, 32//para_reduce, bn=bn, single=True),
                   Rse_block(64//para_reduce, 64, bn=bn, single=True)]
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
@@ -146,10 +146,10 @@ class Classifier(nn.Module):
 class Sorter(nn.Module):
     def __init__(self, out_ch=3, num_perm=2, bn=True, para_reduce=1):
         super(Sorter, self).__init__()
-        self.E1 = Rse_block(512//para_reduce*9, 64, bn=bn)
+        self.E1 = Rse_block(512//para_reduce*4, 64, bn=bn)
         self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
         self.E3 = Rse_block(64, 64, bn=bn)
-        self.f1 = nn.Linear(64 * 3 * 3, 512//para_reduce)
+        self.f1 = nn.Linear(64 * 4 * 4, 512//para_reduce)
         self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
         self.f3 = nn.Linear(256//para_reduce, num_perm)
         # self.E4 = Rse_block(64, 32, bn=bn)
@@ -160,7 +160,7 @@ class Sorter(nn.Module):
         e = self.E1(e4)
         # e = self.E2(e)
         # e = self.E3(e)
-        e = self.f1(e.view(-1, 64 * 3* 3))
+        e = self.f1(e.view(-1, 64 * 4* 4))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.relu(e)

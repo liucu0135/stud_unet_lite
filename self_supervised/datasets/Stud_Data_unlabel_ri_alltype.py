@@ -142,7 +142,7 @@ class myDataset_unlabel(Data.Dataset):
             puzzle[:, edge // 2 + trow * (stride + edge) + giggle:edge // 2 + trow * (stride + edge) + stride + giggle,
             edge // 2 + tcol * (stride + edge) + giggle2:edge // 2 + tcol * (
                         stride + edge) + stride + giggle2] = puzzle_img
-
+        puzzle_list = [puzzle_list[i] for i in idxs]
         # plt.subplot(2,1,1)
         # plt.imshow(puzzle[0,:,:])
         # plt.subplot(2,1,2)
