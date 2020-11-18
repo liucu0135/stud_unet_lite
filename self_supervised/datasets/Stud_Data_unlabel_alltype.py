@@ -111,7 +111,8 @@ class myDataset_unlabel(Data.Dataset):
             puzzle[:, edge // 2 + trow * (stride + edge) + giggle:edge // 2 + trow * (stride + edge) + stride + giggle,
             edge // 2 + tcol * (stride + edge) + giggle2:edge // 2 + tcol * (
                         stride + edge) + stride + giggle2] = puzzle_img
-
+        # plt.imshow(np.transpose(puzzle, (1,2,0)))
+        # plt.show()
         if self.original_img:
             return puzzle, int(self.perm_id), int(type), input, output
         else:

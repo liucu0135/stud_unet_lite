@@ -25,7 +25,7 @@ stud_names = ['Nut_stud']
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
 torch.cuda.empty_cache()
-net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=False, para_reduce=1).cuda()
+net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=False, para_reduce=1, num_puzzle=num_puzzle).cuda()
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
