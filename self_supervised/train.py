@@ -1,14 +1,12 @@
 
-from datasets.Stud_Data_alltype import myDataset
-
-from Model_hourglass_SSDAv2 import SUNET
+import torch
 # from Stud_Data_unlabel import myDataset_unlabel
 # from Model_hourglass_SS import SUNET
 import torch.utils.data as Data
-import torch
-import numpy as np
+from Model_hourglass_SSDAv2 import SUNET
+from datasets.Stud_Data_alltype import myDataset
+
 # from torch.utils.data.sampler import SubsetRandomSampler
-import time
 
 ## nm train SS only
 #stud  sample rate 10  spervised: 3.32
@@ -75,7 +73,7 @@ for name in stud_names:
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
     sample_rate=10
     if name == 'stud':
-        sample_rate=40
+        sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
@@ -90,7 +88,7 @@ for name in stud_names:
 
         # net.load_net(load_path)
 
-    train_loader = torch.utils.data.DataLoader(md_train, batch_size=12, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(md_train, batch_size=12, shuffle=True, num_workers=12)
     validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
 
     train_loss = []
