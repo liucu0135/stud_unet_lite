@@ -83,7 +83,7 @@ for name in stud_names:
     load=True
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load).cuda()
     if load:
-        load_path = './checkpoints/' + name + '/self_sup/net_ss_nm{}.path'.format(save_id)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_ss_nm{}.path'.format(save_id)
         net.load_net(load_path, ext_only=True)
         # net.load_net(save_path, ext_only=False)
 
