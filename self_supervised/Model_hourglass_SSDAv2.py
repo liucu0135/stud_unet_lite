@@ -140,12 +140,12 @@ class Classifier(nn.Module):
 class Sorter(nn.Module):
     def __init__(self, out_ch=3, num_perm=2, bn=False, para_reduce=1, num_puzzle=4):
         super(Sorter, self).__init__()
-        self.E1 = Rse_block(512//para_reduce, 64, bn=bn)
+        self.E1 = nn.Conv2d(512//para_reduce,64,kernel_size=1)
         # self.E1 = Rse_block(512//para_reduce, 256//para_reduce, bn=bn)
         # self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
         # self.E3 = Rse_block(128//para_reduce, 64, bn=bn)
         self.num_puzzle=num_puzzle
-        self.f1 = nn.Linear(64 * 3 * 3*num_puzzle, 512//para_reduce)
+        self.f1 = nn.Linear(64* 6 * 6*num_puzzle, 512//para_reduce)
         # self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
         self.f2= nn.Linear(512//para_reduce, num_perm)
         # self.E4 = Rse_block(64, 32, bn=bn)
@@ -155,7 +155,8 @@ class Sorter(nn.Module):
     def forward(self,es):
         es =[self.E1(e) for e in es]
         e= torch.cat(es,dim=1)
-        e = self.f1(e.view(-1, 64 * 3 * 3*self.num_puzzle))
+        e = torch.nn.functional.relu(e)
+        e = self.f1(e.view(-1, 64 * 6 * 6*self.num_puzzle))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         # e = torch.nn.functional.relu(e)
