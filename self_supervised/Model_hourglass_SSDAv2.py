@@ -440,10 +440,11 @@ class SUNET(nn.Module):
 
     def update_g(self, ss_only=False, multi=False):
         self.cal_loss_g(ss_only)
-        if not ss_only:
-            l = self.Loss_rec_ri+self.Loss_rec_rip + self.Loss_g + self.Loss_rec_nm
+        if ss_only:
+            l = self.Loss_rec_nm  # +self.Loss_rec_ri+self.Loss_rec_rip
         else:
-            l = self.Loss_rec_nm#+self.Loss_rec_ri+self.Loss_rec_rip
+            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_g + self.Loss_rec_nm
+
         if multi:
             l +=self.Loss_c
         self.opt_dec.zero_grad()
