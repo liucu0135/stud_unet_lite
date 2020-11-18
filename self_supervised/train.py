@@ -41,7 +41,7 @@ from datasets.Stud_Data_alltype import myDataset
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 200
+total_epochs = 500
 print_inter = 10
 vali_inter = 200
 validation_split = 0.2
@@ -61,7 +61,7 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-for name in stud_names:
+for name in ['all']:
     save_id=5
     # name='Nut_stud'
     mine = 100
@@ -78,7 +78,7 @@ for name in stud_names:
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=True
+    load=False
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load).cuda()
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_ss_nm{}.path'.format(save_id)
