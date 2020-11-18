@@ -134,7 +134,7 @@ class myDataset_unlabel(Data.Dataset):
         # plt.imshow(np.transpose(puzzle, (1,2,0)))
         # plt.show()
         if self.original_img:
-            return puzzle, int(self.perm_id), int(type), input, output
+            return puzzle, int(self.perm_id), int(type), input, output, puzzle_list
         else:
             return puzzle, int(self.perm_id), puzzle_list
 
