@@ -109,7 +109,7 @@ for name in ['all']:
             net.eval()
             torch.cuda.empty_cache()
             for i, data in enumerate(validation_loader):
-                net.test(data.detach())
+                net.test(data)
                 error.append(net.error)
                 net.cal_loss()
                 vl.append(net.Loss.detach().cpu().data)
