@@ -431,7 +431,7 @@ class SUNET(nn.Module):
         if ss_only:
             l = self.Loss_rec_nm  +self.Loss_rec_ri+self.Loss_rec_rip
         else:
-            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*0.5
+            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*0.2
 
         if multi:
             l +=self.Loss_c
