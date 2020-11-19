@@ -46,8 +46,8 @@ print_inter = 10
 vali_inter = 200
 validation_split = 0.2
 shuffle_dataset = True
-# stud_names = ['stud']
-stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
+stud_names = ['stud']
+# stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
 
 #  10.17  10.22  1.92  4.59  7.65

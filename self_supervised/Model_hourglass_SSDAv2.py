@@ -145,7 +145,7 @@ class Regressor_ff(nn.Module):
         # e4 = torch.cat((e4, e3), dim=1)
         e = self.clasifier(e4)
         # e = torch.nn.functional.relu(e)
-        e = torch.nn.functional.dropout(e, 0.2)
+        e = torch.nn.functional.dropout(e, 0.5)
         e = self.f1(e.view(-1, 16 * 5 * 5))
         # e = torch.nn.functional.dropout(e,0.2)
         # e = torch.nn.functional.relu(e)
