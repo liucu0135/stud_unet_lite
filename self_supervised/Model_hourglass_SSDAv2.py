@@ -11,29 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class Extractor(nn.Module):
-    def __init__(self, in_ch=3, bn=False, para_reduce=1):
-        super(Extractor, self).__init__()
-        self.E1 = Rse_block(in_ch, 32//para_reduce, pool=False, bn=bn)
-        # self.E1 = Rse_block(in_ch, 64, pool=False)
-        self.E2 = Rse_block(32//para_reduce, 64//para_reduce, bn=bn)
-        # self.E2_ri = Rse_block(32, 64)
-        self.E3 = Rse_block(64//para_reduce, 256//para_reduce, bn=bn)
-        self.E4 = Rse_block(256//para_reduce, 512//para_reduce, last=True)
-
-        # self.comp = Compensator(in_ch)
-        # self.opt_comp = optim.Adam(self.comp.parameters(), lr=0.001)
-        # self.opt_self = optim.Adam(
-        #     list(self.E1.parameters()) + list(self.E2.parameters()) + list(self.E3.parameters()) + list(
-        #         self.E4.parameters()), lr=0.001)
-
-    def forward(self, input, ri=False):
-
-        e1 = self.E1(input)
-        e2 = self.E2(e1)
-        e3 = self.E3(e2)
-        e4 = self.E4(e3)
-        return e1, e2, e3, e4
 
 
 class Compensator(nn.Module):
@@ -122,7 +99,6 @@ class Classifier(nn.Module):
                   torch.nn.Conv2d(32, 8, 3, 1, 1),
                   # torch.nn.Dropout2d(0.2),
                   torch.nn.ReLU(),
-
                   # torch.nn.BatchNorm2d(8),
         ]
         self.f1 = nn.Linear(8 * 10 * 10, 64)
@@ -143,33 +119,7 @@ class Classifier(nn.Module):
         return e
 
 
-class Sorter(nn.Module):
-    def __init__(self, out_ch=3, num_perm=2, bn=False, para_reduce=1):
-        super(Sorter, self).__init__()
-        self.E1 = Rse_block(512//para_reduce*4, 64, bn=bn, pool=False, single=True)
-        self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
-        self.E3 = Rse_block(64, 64, bn=bn)
-        self.f1 = nn.Linear(64 * 8 * 8, 512//para_reduce)
-        self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
-        self.f3 = nn.Linear(256//para_reduce, num_perm)
-        # self.E4 = Rse_block(64, 32, bn=bn)
-        # self.E5 = nn.Conv2d(32, num_perm, kernel_size=[2,2], stride=1, padding=0)
-        self.num_perm = num_perm
 
-    def forward(self, e1, e2, e3, e4):
-        e = self.E1(e4)
-        # e = self.E2(e)
-        # e = self.E3(e)
-        e = self.f1(e.view(-1, 64 * 8* 8))
-        e = torch.nn.functional.relu(e)
-        e = self.f2(e)
-        e = torch.nn.functional.relu(e)
-        e = self.f3(e)
-
-        # e4 = self.E4(e3)
-        # e = self.E5(e4).view(-1,self.num_perm)
-        e = torch.nn.functional.softmax(e, dim=1)
-        return e
 
 
 class Regressor(nn.Module):
@@ -231,6 +181,79 @@ class Regressor_ff(nn.Module):
         # e = torch.nn.functional.softmax(e, dim=1)
         return e
 
+class Extractor(nn.Module):
+    def __init__(self, in_ch=3, bn=True, para_reduce=1):
+        super(Extractor, self).__init__()
+        self.E1 = Rse_block(in_ch, 32//para_reduce, pool=False, bn=bn, single=True)
+        # self.E1 = Rse_block(in_ch, 64, pool=False)
+        self.E2 = Rse_block(32//para_reduce, 64//para_reduce, bn=bn, single=True)
+        # self.E2_ri = Rse_block(32, 64)
+        self.E3 = Rse_block(64//para_reduce, 128//para_reduce, bn=bn, single=True)
+        # self.E4 = Rse_block(256//para_reduce, 512//para_reduce, last=True)
+
+        # self.comp = Compensator(in_ch)
+        # self.opt_comp = optim.Adam(self.comp.parameters(), lr=0.001)
+        # self.opt_self = optim.Adam(
+        #     list(self.E1.parameters()) + list(self.E2.parameters()) + list(self.E3.parameters()) + list(
+        #         self.E4.parameters()), lr=0.001)
+
+    def forward(self, input, ri=False):
+
+        e1 = self.E1(input)
+        e2 = self.E2(e1)
+        e3 = self.E3(e2)
+        # e4 = self.E4(e3)
+        return e3
+
+
+
+class Sorter(nn.Module):
+    def __init__(self, out_ch=3, num_perm=2, bn=True, para_reduce=1):
+        super(Sorter, self).__init__()
+        # self.E1 = Rse_block(512//para_reduce, 64, bn=bn, pool=False, single=True)
+        # self.E0 = Rse_block(512//para_reduce*4, 512//para_reduce, bn=bn, pool=False, single=False)
+        # self.E1 = Rse_block(512//para_reduce, bn=bn, pool=False)
+        # self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
+        # self.E3 = Rse_block(64, 64, bn=bn)
+
+        layers=[nn.Conv2d(512//para_reduce*4, 512//para_reduce,kernel_size=1),
+                nn.ReLU(),
+                nn.BatchNorm2d(512 // para_reduce),
+                nn.Conv2d(512 // para_reduce , 256 // para_reduce, kernel_size=1),
+                nn.ReLU(),
+                nn.BatchNorm2d(256 // para_reduce),
+                nn.Conv2d(256 // para_reduce, 64 // para_reduce, kernel_size=1),
+                nn.ReLU(),
+                nn.BatchNorm2d(64 // para_reduce),
+                ]
+        self.E=nn.Sequential(*layers)
+
+        self.f1 = nn.Linear(128*9 * 6* 6, 64//para_reduce)
+        self.dr1 = nn.Dropout(0.5)
+        # self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
+        self.f3 = nn.Linear(64//para_reduce, num_perm)
+        # self.E4 = Rse_block(64, 32, bn=bn)
+        # self.E5 = nn.Conv2d(32, num_perm, kernel_size=[2,2], stride=1, padding=0)
+        self.num_perm = num_perm
+
+    def forward(self, e1, e2, e3, e4):
+        # e = [self.E1(ee).view(-1,512*4 * 8* 8) for ee in e4]
+        # e = self.E2(e)
+        # e = self.E3(e)
+        # e=torch.cat(e,dim=1)
+        # e=self.E(e4)
+        # e=e4[:,:4*64]
+        e = self.f1(e4.view(-1,128*9 * 6* 6))
+        # e = self.dr1(e)
+        # e = torch.nn.functional.relu(e)
+        # e = self.f2(e)
+        e = torch.nn.functional.relu(e)
+        e = self.f3(e)
+
+        # e4 = self.E4(e3)
+        # e = self.E5(e4).view(-1,self.num_perm)
+        e = torch.nn.functional.softmax(e, dim=1)
+        return e
 
 class SUNET(nn.Module):
     def __init__(self, in_ch=3, out_ch=2, ss=True, num_puzzle=9, scale_lr=1, multitask=False, para_reduce=1, ff=False, train_ext=True):
@@ -284,18 +307,20 @@ class SUNET(nn.Module):
         if ss:
             self.input_nm = data[0][-1]
             self.rec_label_nm = data[0][1].cuda()
-            self.input_rip = data[2][-1]
-            self.rec_label_rip = data[2][1].cuda()
-            self.input_ri = data[1][-1]
-            self.rec_label_ri = data[1][1].cuda()
+            # self.input_rip = data[2][-1]
+            # self.rec_label_rip = data[2][1].cuda()
+            # self.input_ri = data[1][-1]
+            # self.rec_label_ri = data[1][1].cuda()
 
-            e4_nm=[self.extractor(data_in.cuda())[3] for data_in in self.input_nm ]
-            e4_rip=[self.extractor(data_in.cuda())[3] for data_in in self.input_rip ]
-            e4_ri=[self.extractor(data_in.cuda())[3] for data_in in self.input_ri ]
+            e4_nm=[self.extractor(data_in.cuda()) for data_in in self.input_nm ]
+            # e4_nm=[data_in.view(-1,37*37*3).cuda() for data_in in self.input_nm ]
+
+            # e4_rip=[self.extractor(data_in.cuda())[3] for data_in in self.input_rip ]
+            # e4_ri=[self.extractor(data_in.cuda())[3] for data_in in self.input_ri ]
 
             e4_nm=torch.cat(e4_nm, dim=1)
-            e4_rip=torch.cat(e4_rip, dim=1)
-            e4_ri=torch.cat(e4_ri, dim=1)
+            # e4_rip=torch.cat(e4_rip, dim=1)
+            # e4_ri=torch.cat(e4_ri, dim=1)
 
 
             # _, _, _, e4_nm = self.extractor(self.input_nm)
@@ -304,24 +329,24 @@ class SUNET(nn.Module):
             _=None
 
             self.recon_nm = self.decoder(_, _, _, e4_nm)
-            self.recon_rip = self.decoder(_, _, _, e4_rip)
-            self.recon_ri = self.decoder(_, _, _, e4_ri)
-            if self.multi:
-                self.c_pre=self.classifier(_, _, _, e4_nm)
-                self.c_label = data[0][2].cuda()
+            # self.recon_rip = self.decoder(_, _, _, e4_rip)
+            # self.recon_ri = self.decoder(_, _, _, e4_ri)
+            # if self.multi:
+            #     self.c_pre=self.classifier(_, _, _, e4_nm)
+            #     self.c_label = data[0][2].cuda()
 
             # self.input_nm = data[0][0].cuda()
             # e1_nm, e2_nm, e3_nm, e4_nm = self.extractor(self.input_nm)
 
 
-            self.d_pre = torch.cat((self.disc(_, _, _, e4_nm), self.disc(_, _, _, e4_ri)),
-                                   dim=0)
-            self.d_label = torch.cat(
-                (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
-                dim=0).cuda()
-            self.g_label = torch.cat(
-                (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.ones(e4_nm.shape[0], dtype=torch.long)),
-                dim=0).cuda()
+            # self.d_pre = torch.cat((self.disc(_, _, _, e4_nm), self.disc(_, _, _, e4_ri)),
+            #                        dim=0)
+            # self.d_label = torch.cat(
+            #     (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
+            #     dim=0).cuda()
+            # self.g_label = torch.cat(
+            #     (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.ones(e4_nm.shape[0], dtype=torch.long)),
+            #     dim=0).cuda()
         else:
             self.input = data[0].cuda()
             self.label = data[1].cuda()
@@ -373,32 +398,30 @@ class SUNET(nn.Module):
             return torch.tensor(0.0)
 
     def accuracy(self, domain=None):
-        if self.recon_ri.shape[0] == self.rec_label_ri.shape[0]:
-            if domain=='ri':
-                pred = torch.argmax(self.recon_ri, dim=1)
-                accuracy = pred == self.rec_label_ri
-                a = torch.mean(accuracy.float())
-            elif domain=='rip':
-                pred = torch.argmax(self.recon_rip, dim=1)
-                accuracy = pred == self.rec_label_rip
-                a = torch.mean(accuracy.float())
-            else:
-                pred = torch.argmax(self.recon_nm, dim=1)
-                accuracy = pred == self.rec_label_nm
-                a = torch.mean(accuracy.float())
-            return a.detach().cpu()
+
+        if domain=='ri':
+            pred = torch.argmax(self.recon_ri, dim=1)
+            accuracy = pred == self.rec_label_ri
+            a = torch.mean(accuracy.float())
+        elif domain=='rip':
+            pred = torch.argmax(self.recon_rip, dim=1)
+            accuracy = pred == self.rec_label_rip
+            a = torch.mean(accuracy.float())
         else:
-            return torch.tensor(-1000000.0)
+            pred = torch.argmax(self.recon_nm, dim=1)
+            accuracy = pred == self.rec_label_nm
+            a = torch.mean(accuracy.float())
+        return a.detach().cpu()
 
     def cal_loss_g(self, ss_only=False):
         self.Loss_rec_nm = self.criterion(self.recon_nm, self.rec_label_nm)
-        self.Loss_rec_ri = self.criterion(self.recon_ri, self.rec_label_ri)
-        self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
-        if not ss_only:
-            bs=self.d_pre.shape[0]//2
-            self.Loss_g = self.criterion(self.d_pre[bs:], self.g_label[bs:])
-        if self.multi:
-            self.cal_loss_c()
+        # self.Loss_rec_ri = self.criterion(self.recon_ri, self.rec_label_ri)
+        # self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
+        # if not ss_only:
+        #     bs=self.d_pre.shape[0]//2
+        #     self.Loss_g = self.criterion(self.d_pre[bs:], self.g_label[bs:])
+        # if self.multi:
+        #     self.cal_loss_c()
 
     def cal_loss(self):
         if self.ff:

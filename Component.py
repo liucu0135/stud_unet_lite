@@ -7,9 +7,10 @@ class Res_unit(nn.Module):
     def __init__(self, in_ch=16, out_ch=16, kernel=3,pad=1, pool=True, bn=False, IN=False, DR=False, LN=False):
         super(Res_unit, self).__init__()
         layers=[]
-        if pool:
-            layers.append(nn.MaxPool2d(kernel_size=2,stride=2))
+
         layers.append(nn.Conv2d(in_ch,out_ch,kernel,1,pad))
+        if pool:
+            layers.append(nn.MaxPool2d(kernel_size=2,stride=2, padding=0))
         layers.append(nn.ReLU())
 
         if bn:

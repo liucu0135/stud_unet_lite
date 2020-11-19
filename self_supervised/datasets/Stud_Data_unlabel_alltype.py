@@ -130,6 +130,7 @@ class myDataset_unlabel(Data.Dataset):
             puzzle[:, edge // 2 + trow * (stride + edge) + giggle:edge // 2 + trow * (stride + edge) + stride + giggle,
             edge // 2 + tcol * (stride + edge) + giggle2:edge // 2 + tcol * (
                         stride + edge) + stride + giggle2] = puzzle_img
+        # puzzle_list=[np.ones_like(puzzle_list[i])*i for i in idxs]
         puzzle_list=[puzzle_list[i] for i in idxs]
         # print(idxs)
         # # plt.imshow(np.transpose(input[:,center[1]-40:center[1]+40,center[0]-40:center[0]+40], (1,2,0)))
