@@ -78,8 +78,8 @@ for name in ['all']:
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=True
-    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True).cuda()
+    load=False
+    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom4.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
@@ -88,10 +88,10 @@ for name in ['all']:
         net.load_net(load_path, ext_only=True)
         # net.load_net(save_path, ext_only=False)
 
-
+    net=net.cuda()
         # net.load_net(load_path)
 
-    train_loader = torch.utils.data.DataLoader(md_train, batch_size=12, shuffle=True, num_workers=0)
+    train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=True, num_workers=0)
     validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
 
     train_loss = []
