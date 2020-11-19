@@ -500,8 +500,8 @@ class SUNET(nn.Module):
         yg = (idg - xg) / 160
 
         if self.ff:
-            xp=self.result[:,0].cpu()
-            yp=self.result[:,1].cpu()
+            xp=self.result[:,0].detach().cpu()
+            yp=self.result[:,1].detach().cpu()
         else:
             pre_array = self.result[:, 0, :, :].view(-1, 160 * 160)
             idp = torch.argmax(pre_array, dim=1).cpu().float()
@@ -518,8 +518,8 @@ class SUNET(nn.Module):
         yg = (idg - xg) / 160
 
         if self.ff:
-            xp=self.result[:,2].cpu()
-            yp=self.result[:,3].cpu()
+            xp=self.result[:,2].detach().cpu()
+            yp=self.result[:,3].detach().cpu()
         else:
             pre_array = self.result[:, 1, :, :].view(-1, 160 * 160)
             idp = torch.argmax(pre_array, dim=1).cpu().float()

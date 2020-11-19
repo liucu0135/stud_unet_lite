@@ -5,7 +5,7 @@ import torch
 import torch.utils.data as Data
 from Model_hourglass_SSDAv2 import SUNET
 from datasets.Stud_Data_alltype import myDataset
-
+import gc
 # from torch.utils.data.sampler import SubsetRandomSampler
 
 ## nm train SS only
@@ -46,7 +46,7 @@ print_inter = 10
 vali_inter = 200
 validation_split = 0.2
 shuffle_dataset = True
-# stud_names = ['Nut_stud','panel_stud']
+# stud_names = ['Nut_stud']
 stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
 
@@ -92,7 +92,7 @@ for name in ['all']:
         # net.load_net(load_path)
 
     train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=True, num_workers=0)
-    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=1)
+    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=1,num_workers=0)
 
     train_loss = []
     for epoch in range(total_epochs):
@@ -105,9 +105,9 @@ for name in ['all']:
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
+        torch.cuda.empty_cache()
         if epoch % 10 == 0:
             net.eval()
-            torch.cuda.empty_cache()
             for i, data in enumerate(validation_loader):
                 net.test(data)
                 error.append(net.error)
@@ -119,9 +119,10 @@ for name in ['all']:
             vl = torch.mean(torch.stack(vl))
             if mine > e:
                 mine = e
-                # net.save_net(save_path)
+                net.save_net(save_path)
             train_loss = []
         if epoch % 10 == 0:
+            # print("ep:{}".format(epoch))
             print("ep:{}, T_loss:{:2f},V_Loss:{:2f}, V_Error:{:2f}".format(epoch, tl, vl, e))
         if epoch % 50 == 0:
             net.LR_decay()
