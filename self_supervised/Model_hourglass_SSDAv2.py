@@ -128,7 +128,7 @@ class Regressor_ff(nn.Module):
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=False),
+        layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=True),
                   Rse_block(256//para_reduce, 128//para_reduce, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
                   Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=True),
@@ -257,7 +257,7 @@ class SUNET(nn.Module):
             self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
         else:
             if self.ff:
-                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce, bn=True)
+                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce)
             else:
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
