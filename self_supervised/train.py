@@ -92,7 +92,7 @@ for name in ['all']:
         # net.load_net(load_path)
 
     train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=True, num_workers=0)
-    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
+    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=1)
 
     train_loss = []
     for epoch in range(total_epochs):
@@ -109,8 +109,8 @@ for name in ['all']:
             net.eval()
             torch.cuda.empty_cache()
             for i, data in enumerate(validation_loader):
-                net.test(data)
-                error.append(net.error)
+                net.test(data.detach())
+                error.append(net.error.detach().cpu())
                 net.cal_loss()
                 vl.append(net.Loss.detach().cpu().data)
             net.train()

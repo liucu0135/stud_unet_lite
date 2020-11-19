@@ -492,9 +492,8 @@ class SUNET(nn.Module):
 
 
     def test(self, input, show=False):
-        self.eval()
+
         self.forward(input, ss=False)
-        self.train()
         gt_array = self.label[:, 0, :, :].view(-1, 160 * 160)
         idg = torch.argmax(gt_array, dim=1).cpu().float()
         xg = idg % 160
