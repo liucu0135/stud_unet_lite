@@ -46,8 +46,8 @@ print_inter = 10
 vali_inter = 200
 validation_split = 0.2
 shuffle_dataset = True
-stud_names = ['stud']
-# stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
+# stud_names = ['stud']
+stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
 
 #  10.17  10.22  1.92  4.59  7.65
@@ -78,7 +78,7 @@ for name in ['all']:
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=True
+    load=False
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True).cuda()
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom5.path'

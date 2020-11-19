@@ -131,7 +131,7 @@ class Regressor_ff(nn.Module):
         layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=False),
                   Rse_block(256//para_reduce, 128//para_reduce, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
-                  Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=False),
+                  Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=True),
                   Rse_block(64 , 32, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
                   Rse_block(32, 16, bn=bn, single=single)]
