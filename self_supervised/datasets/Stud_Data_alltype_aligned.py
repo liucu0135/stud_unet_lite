@@ -20,7 +20,7 @@ class myDataset(Data.Dataset):
         self.dataset_nm = nm_data(path_nm, aug=aug,inch=3, puzzle_num=puzzle_num, sample_rate=sample_rate, original_img=True )
         self.dataset_ri = ri_data(path_ri,pnc=self.dataset_nm.pnc, aug=aug, puzzle_num=puzzle_num, img_number=img_number, sample_rate=sample_rate, original_img=True)
         if more_ri:
-            self.dataset_more_ri = ri_data(path_ri,pnc=self.dataset_nm.pnc, aug=aug, puzzle_num=puzzle_num, img_number=img_number, sample_rate=100, original_img=True)
+            self.dataset_more_ri = ri_data(path_ri,pnc=self.dataset_nm.pnc, aug=aug, puzzle_num=puzzle_num, img_number=img_number, sample_rate=1, original_img=True)
         # check the alignment
 
     def __len__(self):

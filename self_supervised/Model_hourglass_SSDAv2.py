@@ -190,14 +190,14 @@ class Discriminator(nn.Module):
                   Rse_block(64//para_reduce, 64, bn=bn, single=True)]
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
-        self.f1 = nn.Linear(128*9 * 6* 6, 64//para_reduce)
+        self.f1 = nn.Linear(128* 6* 6, 64//para_reduce)
         self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
 
     def forward(self,e4):
         # e = self.clasifier(e4)
-        e = self.f1(e4.view(-1, 128*9 * 6* 6))
+        e = self.f1(e4.view(-1, 128* 6* 6))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
@@ -293,18 +293,18 @@ class SUNET(nn.Module):
             e4_rip=[self.extractor(data_in.cuda()) for data_in in self.input_rip ]
             e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
 
-            e4_nm=torch.cat(e4_nm, dim=1)
-            e4_rip=torch.cat(e4_rip, dim=1)
-            e4_ri=torch.cat(e4_ri, dim=1)
 
-            self.recon_nm = self.decoder(e4_nm)
-            self.recon_rip = self.decoder(e4_rip)
-            self.recon_ri = self.decoder(e4_ri)
+
+            self.recon_nm = self.decoder(torch.cat(e4_nm, dim=1))
+            self.recon_rip = self.decoder(torch.cat(e4_rip, dim=1))
+            self.recon_ri = self.decoder(torch.cat(e4_ri, dim=1))
             # if self.multi:
             #     self.c_pre=self.classifier(_, _, _, e4_nm)
             #     self.c_label = data[0][2].cuda()
 
-
+            e4_nm=torch.cat(e4_nm, dim=0)
+            # e4_rip=torch.cat(e4_rip, dim=0)
+            e4_ri=torch.cat(e4_ri, dim=0)
             self.d_pre = torch.cat((self.disc(e4_nm), self.disc(e4_ri)), dim=0)
             self.d_label = torch.cat(
                 (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
