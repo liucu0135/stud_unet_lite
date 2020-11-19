@@ -41,13 +41,13 @@ from datasets.Stud_Data_alltype import myDataset
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 200
+total_epochs = 400
 print_inter = 10
 vali_inter = 200
 validation_split = 0.2
 shuffle_dataset = True
-# stud_names = ['stud']
-stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
+stud_names = ['stud']
+# stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
 
 #  10.17  10.22  1.92  4.59  7.65
@@ -62,33 +62,36 @@ tl = []
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 for name in ['all']:
-    save_id=7
+    # save_id=6
     # name='Nut_stud'
     mine = 100
     torch.cuda.empty_cache()
 
-    save_path = './checkpoints/all/self_sup/net_ss0.path'
+    save_path = './checkpoints/all/self_sup/net_downstream.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
-    sample_rate=2
-    if name == 'stud':
-        sample_rate=10
+    sample_rate=10
+    # if name == 'stud':
+    #     sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
     load=True
-    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load).cuda()
+    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True).cuda()
     if load:
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_ss_nm{}.path'.format(save_id)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom5.path'
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}'.format(save_id)#net_stack_ssda_mul-dom{}.path
         net.load_net(load_path, ext_only=True)
         # net.load_net(save_path, ext_only=False)
 
 
         # net.load_net(load_path)
 
-    train_loader = torch.utils.data.DataLoader(md_train, batch_size=12, shuffle=True, num_workers=12)
+    train_loader = torch.utils.data.DataLoader(md_train, batch_size=12, shuffle=True, num_workers=0)
     validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
 
     train_loss = []

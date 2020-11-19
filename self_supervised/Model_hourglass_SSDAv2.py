@@ -128,7 +128,7 @@ class Regressor_ff(nn.Module):
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block(512//para_reduce, 256//para_reduce, bn=bn, single=single,DR=True),
+        layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=False),
                   Rse_block(256//para_reduce, 128//para_reduce, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
                   Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=True),
@@ -140,7 +140,7 @@ class Regressor_ff(nn.Module):
         self.clasifier = nn.Sequential(*layers)
 
 
-    def forward(self, e1, e2, e3, e4):
+    def forward(self, e4):
         # e4 = e1
         # e4 = torch.cat((e4, e3), dim=1)
         e = self.clasifier(e4)
@@ -316,10 +316,10 @@ class SUNET(nn.Module):
             self.input = data[0].cuda()
             self.label = data[1].cuda()
             self.c_label=data[2].cuda()
-            e1, e2, e3, e4 = self.extractor(self.input)
-            self.result = self.regressor(e1, e2, e3, e4)
+            e4 = self.extractor(self.input)
+            self.result = self.regressor(e4)
             if self.multi:
-                self.c_pre=self.classifier(e1,e2,e3,e4)
+                self.c_pre=self.classifier(e4)
 
     def show(self, rec=True):
         # plt.ion()
