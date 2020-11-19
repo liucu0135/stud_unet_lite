@@ -246,7 +246,7 @@ class SUNET(nn.Module):
             self.opt_c = optim.Adam(self.classifier.parameters(), lr=0.001, weight_decay=0.001)
             self.scheduler_cls = StepLR(self.opt_c, step_size=1, gamma=0.5)
         if ss:
-            self.disc = Discriminator(para_reduce=para_reduce, bn=True)
+            self.disc = Discriminator(para_reduce=para_reduce, bn=False)
             self.num_puzzle = num_puzzle
             self.decoder = Sorter(in_ch, num_perm=min(math.factorial(self.num_puzzle), 50),para_reduce=para_reduce)
             self.criterion = nn.CrossEntropyLoss()
@@ -257,7 +257,7 @@ class SUNET(nn.Module):
             self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
         else:
             if self.ff:
-                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce)
+                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce,bn=True)
             else:
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
