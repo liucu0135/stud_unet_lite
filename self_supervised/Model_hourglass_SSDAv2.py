@@ -182,7 +182,7 @@ class Regressor_ff(nn.Module):
         return e
 
 class Extractor(nn.Module):
-    def __init__(self, in_ch=3, bn=True, para_reduce=1):
+    def __init__(self, in_ch=3, bn=False, para_reduce=1):
         super(Extractor, self).__init__()
         self.E1 = Rse_block(in_ch, 32//para_reduce, pool=False, bn=bn, single=True)
         # self.E1 = Rse_block(in_ch, 64, pool=False)
