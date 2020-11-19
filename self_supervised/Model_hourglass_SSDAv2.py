@@ -426,12 +426,12 @@ class SUNET(nn.Module):
     def cal_loss_c(self):
         self.Loss_c = torch.nn.functional.cross_entropy(self.c_pre, self.c_label)
 
-    def update_g(self, ss_only=False, multi=False):
+    def update_g(self, ss_only=False, multi=False, g_scale=1):
         self.cal_loss_g(ss_only)
         if ss_only:
             l = self.Loss_rec_nm  +self.Loss_rec_ri+self.Loss_rec_rip
         else:
-            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*0.3
+            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*g_scale
 
         if multi:
             l +=self.Loss_c
