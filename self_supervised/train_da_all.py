@@ -18,8 +18,8 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-# stud_names = ['Nut_stud']
-stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+stud_names = ['Nut_stud']
+# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
@@ -50,14 +50,12 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%10<0:
+        if i%2<1:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=True,multi=False)
-            # train_loss_g.append(net.Loss_g.detach().cpu())
-            acc_c.append(net.accuracy_class())
+            net.update_g(ss_only=False,multi=False)
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
             train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
@@ -65,9 +63,15 @@ for epoch in range(total_epochs):
             acc_rip.append(net.accuracy(domain='rip'))
             acc_nm.append(net.accuracy(domain='nm'))
 
-            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            acc_gan.append(net.Loss_rec_nm.detach().cpu())
+            # domain adaptation results
+            train_loss_g.append(net.Loss_g.detach().cpu())
+            # train_loss_d.append(net.Loss_d.detach().cpu())
+            # acc_gan.append(net.accuracy_gan())
+
+            # dummy results
+            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            # acc_gan.append(net.Loss_rec_nm.detach().cpu())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
@@ -91,9 +95,9 @@ for epoch in range(total_epochs):
 
 
     if epoch%50==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom{}.path'.format(epoch//50)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//50)
         net.save_net(save_path)
-    if epoch % 10 == 1:
+    if (epoch+1) % 10 == 0:
         gl = torch.mean(torch.stack(train_loss_g))
         dl = torch.mean(torch.stack(train_loss_d))
         nml = torch.mean(torch.stack(train_loss_mn))
