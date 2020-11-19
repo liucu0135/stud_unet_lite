@@ -123,7 +123,7 @@ class Regressor(nn.Module):
         return result
 
 class Regressor_ff(nn.Module):
-    def __init__(self, out_ch=3, bn=True, single=False, para_reduce=1):
+    def __init__(self, out_ch=3, bn=False, single=False, para_reduce=1):
         super(Regressor_ff, self).__init__()
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
