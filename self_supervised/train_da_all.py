@@ -18,8 +18,8 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-# stud_names = ['Nut_stud']
-stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+stud_names = ['Nut_stud']
+# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
@@ -59,10 +59,10 @@ for epoch in range(total_epochs):
             # train_loss_g.append(net.Loss_g.detach().cpu())
             acc_c.append(net.accuracy_class())
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
-            # train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
-            # train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
-            # acc_ri.append(net.accuracy(domain='ri'))
-            # acc_rip.append(net.accuracy(domain='rip'))
+            train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
+            train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
+            acc_ri.append(net.accuracy(domain='ri'))
+            acc_rip.append(net.accuracy(domain='rip'))
             acc_nm.append(net.accuracy(domain='nm'))
 
             train_loss_g.append(net.Loss_rec_nm.detach().cpu())
@@ -91,27 +91,27 @@ for epoch in range(total_epochs):
 
 
     if epoch%50==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly{}.path'.format(epoch//50)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom{}.path'.format(epoch//50)
         net.save_net(save_path)
     if epoch % 10 == 1:
-        # gl = torch.mean(torch.stack(train_loss_g))
-        # dl = torch.mean(torch.stack(train_loss_d))
+        gl = torch.mean(torch.stack(train_loss_g))
+        dl = torch.mean(torch.stack(train_loss_d))
         nml = torch.mean(torch.stack(train_loss_mn))
-        # ril = torch.mean(torch.stack(train_loss_ri))
-        # ripl = torch.mean(torch.stack(train_loss_rip))
-        # acr = torch.mean(torch.stack(acc_ri))
-        # acrp = torch.mean(torch.stack(acc_rip))
+        ril = torch.mean(torch.stack(train_loss_ri))
+        ripl = torch.mean(torch.stack(train_loss_rip))
+        acr = torch.mean(torch.stack(acc_ri))
+        acrp = torch.mean(torch.stack(acc_rip))
         acn = torch.mean(torch.stack(acc_nm))
-        # acg = torch.mean(torch.stack(acc_gan))
+        acg = torch.mean(torch.stack(acc_gan))
         # acc = torch.mean(torch.stack(acc_c))
         mine = 0
-        # print(
-        #     "ep:{}, D_l:{:.3f}, G_l:{:.3f}, nm_l:{:.3f}, ri_l:{:.3f}, rip_l:{:.3f},acc_rip:{:.3f},acc_ri:{:.3f}, acc_nm:{:.3f}, acc_g:{:.3f}".format(
-        #         epoch, dl, gl,
-        #         nml, ril,ripl, acrp,acr, acn, acg))
         print(
-            "ep:{}, nm_l:{:.3f},  acc_nm:{:.3f}".format(
-                epoch,          nml,acn))
+            "ep:{}, D_l:{:.3f}, G_l:{:.3f}, nm_l:{:.3f}, ri_l:{:.3f}, rip_l:{:.3f},acc_rip:{:.3f},acc_ri:{:.3f}, acc_nm:{:.3f}, acc_g:{:.3f}".format(
+                epoch, dl, gl,
+                nml, ril,ripl, acrp,acr, acn, acg))
+        # print(
+        #     "ep:{}, nm_l:{:.3f},  acc_nm:{:.3f}".format(
+        #         epoch,          nml,acn))
     # if epoch % 20 == 0:
     #     net.LR_decay(ss=True)
 

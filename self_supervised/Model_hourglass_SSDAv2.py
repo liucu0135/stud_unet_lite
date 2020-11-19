@@ -210,11 +210,6 @@ class Extractor(nn.Module):
 class Sorter(nn.Module):
     def __init__(self, out_ch=3, num_perm=2, bn=True, para_reduce=1):
         super(Sorter, self).__init__()
-        # self.E1 = Rse_block(512//para_reduce, 64, bn=bn, pool=False, single=True)
-        # self.E0 = Rse_block(512//para_reduce*4, 512//para_reduce, bn=bn, pool=False, single=False)
-        # self.E1 = Rse_block(512//para_reduce, bn=bn, pool=False)
-        # self.E2 = Rse_block(256//para_reduce, 64, bn=bn)
-        # self.E3 = Rse_block(64, 64, bn=bn)
 
         layers=[nn.Conv2d(512//para_reduce*4, 512//para_reduce,kernel_size=1),
                 nn.ReLU(),
@@ -230,28 +225,14 @@ class Sorter(nn.Module):
 
         self.f1 = nn.Linear(128*9 * 6* 6, 64//para_reduce)
         self.dr1 = nn.Dropout(0.5)
-        # self.f2 = nn.Linear(512//para_reduce, 256//para_reduce)
         self.f3 = nn.Linear(64//para_reduce, num_perm)
-        # self.E4 = Rse_block(64, 32, bn=bn)
-        # self.E5 = nn.Conv2d(32, num_perm, kernel_size=[2,2], stride=1, padding=0)
         self.num_perm = num_perm
 
-    def forward(self, e1, e2, e3, e4):
-        # e = [self.E1(ee).view(-1,512*4 * 8* 8) for ee in e4]
-        # e = self.E2(e)
-        # e = self.E3(e)
-        # e=torch.cat(e,dim=1)
-        # e=self.E(e4)
-        # e=e4[:,:4*64]
-        e = self.f1(e4.view(-1,128*9 * 6* 6))
-        # e = self.dr1(e)
-        # e = torch.nn.functional.relu(e)
-        # e = self.f2(e)
+    def forward(self, e):
+
+        e = self.f1(e.view(-1,128*9 * 6* 6))
         e = torch.nn.functional.relu(e)
         e = self.f3(e)
-
-        # e4 = self.E4(e3)
-        # e = self.E5(e4).view(-1,self.num_perm)
         e = torch.nn.functional.softmax(e, dim=1)
         return e
 
@@ -307,20 +288,18 @@ class SUNET(nn.Module):
         if ss:
             self.input_nm = data[0][-1]
             self.rec_label_nm = data[0][1].cuda()
-            # self.input_rip = data[2][-1]
-            # self.rec_label_rip = data[2][1].cuda()
-            # self.input_ri = data[1][-1]
-            # self.rec_label_ri = data[1][1].cuda()
+            self.input_rip = data[2][-1]
+            self.rec_label_rip = data[2][1].cuda()
+            self.input_ri = data[1][-1]
+            self.rec_label_ri = data[1][1].cuda()
 
             e4_nm=[self.extractor(data_in.cuda()) for data_in in self.input_nm ]
-            # e4_nm=[data_in.view(-1,37*37*3).cuda() for data_in in self.input_nm ]
-
-            # e4_rip=[self.extractor(data_in.cuda())[3] for data_in in self.input_rip ]
-            # e4_ri=[self.extractor(data_in.cuda())[3] for data_in in self.input_ri ]
+            e4_rip=[self.extractor(data_in.cuda()) for data_in in self.input_rip ]
+            e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
 
             e4_nm=torch.cat(e4_nm, dim=1)
-            # e4_rip=torch.cat(e4_rip, dim=1)
-            # e4_ri=torch.cat(e4_ri, dim=1)
+            e4_rip=torch.cat(e4_rip, dim=1)
+            e4_ri=torch.cat(e4_ri, dim=1)
 
 
             # _, _, _, e4_nm = self.extractor(self.input_nm)
@@ -328,9 +307,9 @@ class SUNET(nn.Module):
             # _, _, _, e4_ri = self.extractor(self.input_ri)
             _=None
 
-            self.recon_nm = self.decoder(_, _, _, e4_nm)
-            # self.recon_rip = self.decoder(_, _, _, e4_rip)
-            # self.recon_ri = self.decoder(_, _, _, e4_ri)
+            self.recon_nm = self.decoder(e4_nm)
+            self.recon_rip = self.decoder(e4_rip)
+            self.recon_ri = self.decoder(e4_ri)
             # if self.multi:
             #     self.c_pre=self.classifier(_, _, _, e4_nm)
             #     self.c_label = data[0][2].cuda()
@@ -415,8 +394,8 @@ class SUNET(nn.Module):
 
     def cal_loss_g(self, ss_only=False):
         self.Loss_rec_nm = self.criterion(self.recon_nm, self.rec_label_nm)
-        # self.Loss_rec_ri = self.criterion(self.recon_ri, self.rec_label_ri)
-        # self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
+        self.Loss_rec_ri = self.criterion(self.recon_ri, self.rec_label_ri)
+        self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
         # if not ss_only:
         #     bs=self.d_pre.shape[0]//2
         #     self.Loss_g = self.criterion(self.d_pre[bs:], self.g_label[bs:])
@@ -464,7 +443,7 @@ class SUNET(nn.Module):
     def update_g(self, ss_only=False, multi=False):
         self.cal_loss_g(ss_only)
         if ss_only:
-            l = self.Loss_rec_nm  # +self.Loss_rec_ri+self.Loss_rec_rip
+            l = self.Loss_rec_nm  +self.Loss_rec_ri+self.Loss_rec_rip
         else:
             l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_g + self.Loss_rec_nm
 
