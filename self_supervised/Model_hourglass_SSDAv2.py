@@ -123,16 +123,16 @@ class Regressor(nn.Module):
         return result
 
 class Regressor_ff(nn.Module):
-    def __init__(self, out_ch=3, bn=False, single=False, para_reduce=1):
+    def __init__(self, out_ch=3, bn=True, single=False, para_reduce=1):
         super(Regressor_ff, self).__init__()
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=True),
-                  Rse_block(256//para_reduce, 128//para_reduce, pool=False, bn=bn, single=single,DR=True),
+        layers = [Rse_block(128//para_reduce, 256//para_reduce, bn=bn, single=single,DR=False),
+                  Rse_block(256//para_reduce, 128//para_reduce, pool=False, bn=bn, single=single,DR=False),
                   # nn.Dropout2d(0.5),
-                  Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=True),
-                  Rse_block(64 , 32, pool=False, bn=bn, single=single,DR=True),
+                  Rse_block(128//para_reduce, 64, bn=bn, single=single,DR=False),
+                  Rse_block(64 , 32, pool=False, bn=bn, single=single,DR=False),
                   # nn.Dropout2d(0.5),
                   Rse_block(32, 16, bn=bn, single=single)]
         self.f1 = nn.Linear(16 * 5 * 5, 256)
@@ -145,7 +145,7 @@ class Regressor_ff(nn.Module):
         # e4 = torch.cat((e4, e3), dim=1)
         e = self.clasifier(e4)
         # e = torch.nn.functional.relu(e)
-        e = torch.nn.functional.dropout(e, 0.5)
+        e = torch.nn.functional.dropout(e, 0.2)
         e = self.f1(e.view(-1, 16 * 5 * 5))
         # e = torch.nn.functional.dropout(e,0.2)
         # e = torch.nn.functional.relu(e)
