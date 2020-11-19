@@ -18,8 +18,8 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-stud_names = ['Nut_stud']
-# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+# stud_names = ['Nut_stud']
+stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
@@ -29,7 +29,7 @@ path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
 path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=20, puzzle_num=num_puzzle, more_ri=True)
+md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=10, puzzle_num=num_puzzle, more_ri=True)
 train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 load=False
 
