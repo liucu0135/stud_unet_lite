@@ -12,7 +12,7 @@ from datasets.Stud_Data_alltype_aligned import myDataset
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 500
+total_epochs = 1000
 print_inter = 10
 vali_inter = 10
 validation_split = 0.2
@@ -94,8 +94,8 @@ for epoch in range(total_epochs):
     error = []
 
 
-    if epoch%50==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//50)
+    if epoch%100==0:
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
         net.save_net(save_path)
     if (epoch+1) % 10 == 0:
         gl = torch.mean(torch.stack(train_loss_g))
