@@ -257,7 +257,7 @@ class SUNET(nn.Module):
             self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
         else:
             if self.ff:
-                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce,bn=True)
+                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce,bn=False)
             else:
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
