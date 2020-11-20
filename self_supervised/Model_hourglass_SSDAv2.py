@@ -133,18 +133,18 @@ class Regressor_ff(nn.Module):
                   Rse_block(64 , 32, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
                   Rse_block(32, 16, bn=bn, single=single)]
-        self.f1 = nn.Linear(16 * 5 * 5, 256)
+        self.f1 = nn.Linear(128 * 40 * 40, 256)
         self.f2 = nn.Linear(256, 4)
         self.clasifier = nn.Sequential(*layers)
 
 
-    def forward(self, e4):
+    def forward(self, e):
         # e4 = e1
         # e4 = torch.cat((e4, e3), dim=1)
-        e = self.clasifier(e4)
+        # e = self.clasifier(e)
         # e = torch.nn.functional.relu(e)
         e = torch.nn.functional.dropout(e, 0.2)
-        e = self.f1(e.view(-1, 16 * 5 * 5))
+        e = self.f1(e.view(-1, 128 * 40 * 40))
         # e = torch.nn.functional.dropout(e,0.2)
         # e = torch.nn.functional.relu(e)
         e = self.f2(e)
