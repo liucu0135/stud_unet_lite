@@ -71,11 +71,11 @@ for pretext_id in range(1,9):
     sample_rate=10
     # if name == 'stud':
     #     sample_rate=10
-    md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
+    md_train = myDataset(path_train, aug=False, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=False
+    load=True
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
