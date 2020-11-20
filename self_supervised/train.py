@@ -75,8 +75,8 @@ for pretext_id in range(1):
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=False, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=True
-    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
+    load=False
+    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=load, ff=True)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri9.path'
