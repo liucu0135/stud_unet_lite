@@ -75,8 +75,8 @@ for pretext_id in range(1):
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=False
-    net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=load, ff=True)
+    load=True
+    net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri9.path'
@@ -90,7 +90,7 @@ for pretext_id in range(1):
         # net.load_net(load_path)
 
     train_loader = torch.utils.data.DataLoader(md_train, batch_size=5, shuffle=False, num_workers=0)
-    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=1,num_workers=0)
+    validation_loader = torch.utils.data.DataLoader(md_test, batch_size=32,num_workers=0)
 
     train_loss = []
     for epoch in range(total_epochs):
