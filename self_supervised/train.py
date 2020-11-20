@@ -61,7 +61,7 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-for pretext_id in range(2,4):
+for pretext_id in range(1):
     mine = 100
     torch.cuda.empty_cache()
     save_path = './checkpoints/all/self_sup/net_downstream_ssda{}.path'.format(pretext_id)
