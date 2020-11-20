@@ -67,7 +67,7 @@ for name in ['all']:
     mine = 100
     torch.cuda.empty_cache()
 
-    save_path = './checkpoints/all/self_sup/net_downstream.path'
+    save_path = './checkpoints/all/self_sup/net_downstream_ri.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
@@ -81,7 +81,8 @@ for name in ['all']:
     load=False
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
     if load:
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom9.path'
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom9.path'
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}'.format(save_id)#net_stack_ssda_mul-dom{}.path
