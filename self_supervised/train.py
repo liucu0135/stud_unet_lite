@@ -5,7 +5,7 @@ import torch
 import torch.utils.data as Data
 from Model_hourglass_SSDAv2 import SUNET
 # from datasets.Stud_Data_alltype import myDataset
-from datasets.Stud_Data_alltype_ri import myDataset
+from datasets.Stud_Data_alltype import myDataset
 import gc
 # from torch.utils.data.sampler import SubsetRandomSampler
 
