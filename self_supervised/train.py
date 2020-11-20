@@ -61,13 +61,10 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-for name in ['all']:
-    # save_id=6
-    # name='Nut_stud'
+for pretext_id in range(1,9):
     mine = 100
     torch.cuda.empty_cache()
-
-    save_path = './checkpoints/all/self_sup/net_downstream_ssda.path'
+    save_path = './checkpoints/all/self_sup/net_downstream_ssda{}.path'.format(pretext_id)
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
@@ -81,7 +78,7 @@ for name in ['all']:
     load=True
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
     if load:
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom8.path'
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
@@ -122,10 +119,10 @@ for name in ['all']:
                 mine = e
                 net.save_net(save_path)
             train_loss = []
-        if epoch % 10 == 0:
+        if epoch % 100 == 0:
             # print("ep:{}".format(epoch))
             print("ep:{}, T_loss:{:2f},V_Loss:{:2f}, V_Error:{:2f}".format(epoch, tl, vl, e))
         if epoch % 50 == 0:
             net.LR_decay()
 
-    print(name, ' Finished. min_vali_error:', mine)
+    # print(name, ' Finished. min_vali_error:', mine)
