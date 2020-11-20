@@ -82,7 +82,7 @@ for name in ['all']:
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=not load, ff=True)
     if load:
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom9.path'
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri.path'
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}'.format(save_id)#net_stack_ssda_mul-dom{}.path
