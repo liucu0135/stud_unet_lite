@@ -188,7 +188,7 @@ class Discriminator(nn.Module):
                   Rse_block(64//para_reduce, 64, bn=bn, single=True)]
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
-        self.f1 = nn.Linear(128* 6* 6, 64//para_reduce)
+        self.f1 = nn.Linear(128* 6* 6//para_reduce, 64//para_reduce)
         self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
@@ -218,7 +218,7 @@ class Sorter(nn.Module):
                 ]
         self.E=nn.Sequential(*layers)
         self.para_reduce=para_reduce
-        self.f1 = nn.Linear(128*9 * 6* 6, 64//para_reduce)
+        self.f1 = nn.Linear(128*9 * 6* 6//para_reduce, 64//para_reduce)
         self.dr1 = nn.Dropout(0.5)
         self.f3 = nn.Linear(64//para_reduce, num_perm)
         self.num_perm = num_perm

@@ -4,7 +4,8 @@ import torch
 # from Model_hourglass_SS import SUNET
 import torch.utils.data as Data
 from Model_hourglass_SSDAv2 import SUNET
-from datasets.Stud_Data_alltype import myDataset
+# from datasets.Stud_Data_alltype import myDataset
+from datasets.Stud_Data_alltype_ri import myDataset
 import gc
 # from torch.utils.data.sampler import SubsetRandomSampler
 
@@ -75,7 +76,7 @@ for pretext_id in range(1,5):
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=True
+    load=False
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
