@@ -73,7 +73,7 @@ for pretext_id in range(1):
     #     sample_rate=10
     md_train = myDataset(path_train, aug=False, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
-    md_test = myDataset(path_test, aug=False, inch=3)
+    md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
     load=False
     net = SUNET(in_ch=3, out_ch=2, ss=False, train_ext=load, ff=True)
