@@ -99,7 +99,7 @@ for pretext_id in range(1):
             # if i % 10 == 0:
             #     print(i, 'of ', len(train_loader), 'done')
             net(data, ss=False)
-            net.update()
+            net.update(reg_only=not load)
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
