@@ -192,10 +192,11 @@ class Discriminator(nn.Module):
         self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
+        self.para_reduce=para_reduce
 
     def forward(self,e4):
         # e = self.clasifier(e4)
-        e = self.f1(e4.view(-1, 128* 6* 6))
+        e = self.f1(e4.view(-1, 128* 6* 6//self.para_reduce))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
@@ -216,7 +217,7 @@ class Sorter(nn.Module):
                 nn.BatchNorm2d(64 // para_reduce),
                 ]
         self.E=nn.Sequential(*layers)
-
+        self.para_reduce=para_reduce
         self.f1 = nn.Linear(128*9 * 6* 6, 64//para_reduce)
         self.dr1 = nn.Dropout(0.5)
         self.f3 = nn.Linear(64//para_reduce, num_perm)
@@ -224,7 +225,7 @@ class Sorter(nn.Module):
 
     def forward(self, e):
 
-        e = self.f1(e.view(-1,128*9 * 6* 6))
+        e = self.f1(e.view(-1,128*9 * 6* 6//self.para_reduce))
         e = torch.nn.functional.relu(e)
         e = self.f3(e)
         e = torch.nn.functional.softmax(e, dim=1)
