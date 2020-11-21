@@ -9,34 +9,11 @@ from datasets.Stud_Data_alltype import myDataset
 import gc
 # from torch.utils.data.sampler import SubsetRandomSampler
 
-## nm train SS only
-#stud  sample rate 10  spervised: 3.32
-#stud  sample rate 50  spervised: 5.4
-#stud  sample rate 100  spervised: 6.9
+# sample=20:
 
-
-##  Benchmarks
-#stud  sample rate 10  spervised: 6.1618  label_number: 46
-#stud  sample rate 50  spervised: 6.8636  label_number: 9
-#stud  sample rate 100  spervised: 7.8636  label_number: 4
-
-## nm SS only
-#stud  sample rate 10  spervised: 3.69
-#stud  sample rate 50  spervised: 5.88
-#stud  sample rate 100  spervised: 8.3738
-
-
-
-## SSDA
-#stud  sample rate 10  spervised: 2.85
-#stud  sample rate 50  spervised: 4.8
-#stud  sample rate 100  spervised: 6.92
-
-
-## ri SS only
-#stud  sample rate 10  spervised: 2.85
-#stud  sample rate 50  spervised: 5.43
-#stud  sample rate 100  spervised: 7.66(6.97)
+#  bench:8.51
+#  pro:7.69
+#  ss only:
 
 
 
@@ -79,8 +56,8 @@ for pretext_id in range(0,5):
     load=pretext_id>0
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
-        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(pretext_id)
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
