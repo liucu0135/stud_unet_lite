@@ -53,26 +53,12 @@ class Decoder(nn.Module):
 
 
 class Classifier(nn.Module):
-    def __init__(self, out_ch=3, bn=False, para_reduce=1):
+    def __init__(self, out_ch=3, bn=False, single=False, para_reduce=1):
         super(Classifier, self).__init__()
-        layers = [
-                  torch.nn.MaxPool2d(3, 2, 1),
-                  # torch.nn.Dropout2d(0.2),
-                  torch.nn.Conv2d(256//para_reduce,32,3,1,1),
-                  torch.nn.ReLU(),
-                  torch.nn.BatchNorm2d(32),
-                  torch.nn.Conv2d(32,32,3,1,1),
-                  torch.nn.ReLU(),
-                  # torch.nn.BatchNorm2d(32),
-                  # torch.nn.MaxPool2d(3, 2, 1),
-                  # torch.nn.Conv2d(32, 32, 3, 1, 1),
-                  # torch.nn.ReLU(),
-                  torch.nn.MaxPool2d(3, 2, 1),
-                  torch.nn.Conv2d(32, 8, 3, 1, 1),
-                  # torch.nn.Dropout2d(0.2),
-                  torch.nn.ReLU(),
-                  # torch.nn.BatchNorm2d(8),
-        ]
+        layers = [Rse_block(128//para_reduce, 128, bn=bn, single=single,DR=False),
+                  Rse_block(128, 64, pool=False, bn=bn, single=single),
+                  # nn.Dropout2d(0.5),
+                  Rse_block(64, 32, bn=bn, single=single,DR=False)]
         self.f1 = nn.Linear(8 * 10 * 10, 64)
         self.f2 = nn.Linear(64, 5)
         self.clasifier = nn.Sequential(*layers)
@@ -121,7 +107,7 @@ class Regressor(nn.Module):
         return result
 
 class Regressor_ff(nn.Module):
-    def __init__(self, out_ch=3, bn=True, single=False, para_reduce=1):
+    def __init__(self, out_ch=3, bn=False, single=True, para_reduce=1):
         super(Regressor_ff, self).__init__()
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
@@ -314,9 +300,11 @@ class SUNET(nn.Module):
             self.label = data[1].cuda()
             self.c_label=data[2].cuda()
             e4 = self.extractor(self.input)
-            self.result = self.regressor(e4)
+
             if self.multi:
                 self.c_pre=self.classifier(e4)
+            else:
+                self.result = self.regressor(e4)
 
     def show(self, rec=True):
         # plt.ion()
