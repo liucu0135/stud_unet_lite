@@ -12,7 +12,7 @@ from datasets.Stud_Data_alltype_aligned import myDataset
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 1000
+total_epochs = 301
 print_inter = 10
 vali_inter = 10
 validation_split = 0.2
@@ -55,7 +55,7 @@ for epoch in range(total_epochs):
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300,0.5))
+            net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.5))
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
             train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
