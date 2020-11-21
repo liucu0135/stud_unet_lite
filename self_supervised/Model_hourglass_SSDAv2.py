@@ -135,6 +135,7 @@ class Regressor_ff(nn.Module):
                   Rse_block(32, 16, bn=bn, single=single)]
         self.f1 = nn.Linear(128 * 40 * 40, 4)
         self.f2 = nn.Linear(256, 4)
+        self.para_reduce=para_reduce
         self.clasifier = nn.Sequential(*layers)
 
 
@@ -144,7 +145,7 @@ class Regressor_ff(nn.Module):
         # e = self.clasifier(e)
         # e = torch.nn.functional.relu(e)
         # e = torch.nn.functional.dropout(e, 0.2)
-        e = self.f1(e.view(-1, 128 * 40 * 40))
+        e = self.f1(e.view(-1, 128 * 40 * 40// self.para_reduce))
         # e = torch.nn.functional.dropout(e,0.2)
         # e = torch.nn.functional.relu(e)
         # e = self.f2(e)
