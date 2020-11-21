@@ -29,7 +29,7 @@ path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
 path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=1, puzzle_num=num_puzzle, more_ri=True)
+md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=10, puzzle_num=num_puzzle, more_ri=True)
 train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 load=False
 
