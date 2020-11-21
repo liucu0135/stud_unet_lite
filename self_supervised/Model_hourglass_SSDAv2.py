@@ -133,9 +133,9 @@ class Regressor_ff(nn.Module):
                   Rse_block(64 , 32, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
                   Rse_block(32, 16, bn=bn, single=single)]
+        self.para_reduce=para_reduce
         self.f1 = nn.Linear(128 * 40 * 40, 4// self.para_reduce)
         self.f2 = nn.Linear(256, 4)
-        self.para_reduce=para_reduce
         self.clasifier = nn.Sequential(*layers)
 
 
