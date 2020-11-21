@@ -81,7 +81,7 @@ for pretext_id in range(1,5):
     if load:
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(pretext_id)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(pretext_id)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm6.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}'.format(save_id)#net_stack_ssda_mul-dom{}.path
