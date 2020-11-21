@@ -537,7 +537,8 @@ class SUNET(nn.Module):
     def load_net(self, save_path, ext_only=False):
         if ext_only:
             state_dict = torch.load(save_path)
-            s = {k: state_dict[k] for k in state_dict if 'extractor.E' in k}
-            self.extractor.load_state_dict(s, strict=False)
+            # s = {k: state_dict[k] for k in state_dict if 'extractor' in k}
+            # self.extractor.load_state_dict(s, strict=False)
+            self.extractor.load_state_dict(state_dict, strict=False)
         else:
             self.load_state_dict(torch.load(save_path))
