@@ -259,9 +259,9 @@ class SUNET(nn.Module):
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
             # paras1=list(self.extractor.parameters())
-            paras1=list(self.extractor.E1.parameters())+list(self.extractor.E2.parameters())
+            paras1=list(self.extractor.E1.parameters())
             paras2=list(self.regressor.parameters())
-            paras2+=list(self.extractor.E3.parameters())#+list(self.regressor.parameters())
+            paras2+=list(self.extractor.E3.parameters())+list(self.extractor.E2.parameters())#+list(self.regressor.parameters())
             # self.opt_ext = optim.Adam(paras, lr=0.00001)
             if train_ext:
                 # self.opt_ext = optim.Adam(paras1, lr=0.001*scale_lr*train_ext)
