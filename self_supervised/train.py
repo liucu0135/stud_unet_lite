@@ -69,7 +69,7 @@ for pretext_id in range(1,5):
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
-    sample_rate=10
+    sample_rate=20
     # if name == 'stud':
     #     sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
