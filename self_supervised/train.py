@@ -10,12 +10,14 @@ import gc
 # from torch.utils.data.sampler import SubsetRandomSampler
 
 # sample=20:
-
 #  bench:9.07
 #  pro:7.69
 #  ss only:
 
-
+# sample=50:
+#  bench:6.38
+#  pro:6.08
+#  ss only:
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
@@ -27,6 +29,7 @@ shuffle_dataset = True
 # stud_names = ['Nut_stud']
 stud_names = ['panel_stud', 'Nut_stud',  'ball_stud', 'T_stud', 'stud']
 #  11.05  11.93  2.1  4.7  6.9
+
 
 #  10.17  10.22  1.92  4.59  7.65
 #  12.85  12.18  3.06  10.79  8.23
@@ -46,7 +49,7 @@ for pretext_id in range(0,5):
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
-    sample_rate=50
+    sample_rate=10
     # if name == 'stud':
     #     sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
