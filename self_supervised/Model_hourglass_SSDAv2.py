@@ -258,10 +258,10 @@ class SUNET(nn.Module):
             else:
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
-            paras1=list(self.extractor.parameters())
-            # paras1=list(self.extractor.E1.parameters())+list(self.extractor.E2.parameters())+list(self.extractor.E3.parameters())
-            # paras2=list(self.extractor.E4.parameters())+list(self.regressor.parameters())
+            # paras1=list(self.extractor.parameters())
+            paras1=list(self.extractor.E1.parameters())+list(self.extractor.E2.parameters())
             paras2=list(self.regressor.parameters())
+            paras2+=list(self.extractor.E3.parameters())#+list(self.regressor.parameters())
             # self.opt_ext = optim.Adam(paras, lr=0.00001)
             if train_ext:
                 # self.opt_ext = optim.Adam(paras1, lr=0.001*scale_lr*train_ext)
@@ -486,7 +486,8 @@ class SUNET(nn.Module):
         return torch.stack((xg1,yg1,xg2,yg2),dim=1).cuda()
 
 
-
+    def init_weights(self):
+        nn.torch.nor
 
     def test(self, input, show=False):
 

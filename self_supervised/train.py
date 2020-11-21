@@ -87,6 +87,7 @@ for pretext_id in range(1,5):
         net.load_net(load_path, ext_only=True)
         # net.load_net(save_path, ext_only=False)
 
+
     net=net.cuda()
         # net.load_net(load_path)
 
