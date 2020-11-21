@@ -90,7 +90,7 @@ for pretext_id in range(1,5):
     net=net.cuda()
         # net.load_net(load_path)
 
-    train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=False, num_workers=4)
+    train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=False, num_workers=0)
     validation_loader = torch.utils.data.DataLoader(md_test, batch_size=32,num_workers=0)
 
     train_loss = []
