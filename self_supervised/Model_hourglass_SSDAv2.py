@@ -161,7 +161,7 @@ class Extractor(nn.Module):
         # self.E1 = Rse_block(in_ch, 64, pool=False)
         self.E2 = Rse_block(32//para_reduce, 64//para_reduce, bn=bn, single=True)
         # self.E2_ri = Rse_block(32, 64)
-        self.E3 = Rse_block(64//para_reduce, 128//para_reduce, bn=bn, single=True)
+        self.E3 = Rse_block(64//para_reduce, 128//para_reduce, pool=False, bn=bn, single=True)
         # self.E4 = Rse_block(256//para_reduce, 512//para_reduce, last=True)
 
         # self.comp = Compensator(in_ch)
@@ -189,7 +189,7 @@ class Discriminator(nn.Module):
                   Rse_block(64//para_reduce, 64, bn=bn, single=True)]
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
-        self.f1 = nn.Linear(128* 6* 6//para_reduce, 64//para_reduce)
+        self.f1 = nn.Linear(128* 12* 12//para_reduce, 64//para_reduce)
         self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
@@ -197,7 +197,7 @@ class Discriminator(nn.Module):
 
     def forward(self,e4):
         # e = self.clasifier(e4)
-        e = self.f1(e4.view(-1, 128* 6* 6//self.para_reduce))
+        e = self.f1(e4.view(-1, 128* 12* 12//self.para_reduce))
         e = torch.nn.functional.relu(e)
         e = self.f2(e)
         e = torch.nn.functional.softmax(e, dim=1)
@@ -219,14 +219,14 @@ class Sorter(nn.Module):
                 ]
         self.E=nn.Sequential(*layers)
         self.para_reduce=para_reduce
-        self.f1 = nn.Linear(128*9 * 6* 6//para_reduce, 64//para_reduce)
+        self.f1 = nn.Linear(128*9 * 12* 12//para_reduce, 64//para_reduce)
         self.dr1 = nn.Dropout(0.5)
         self.f3 = nn.Linear(64//para_reduce, num_perm)
         self.num_perm = num_perm
 
     def forward(self, e):
 
-        e = self.f1(e.view(-1,128*9 * 6* 6//self.para_reduce))
+        e = self.f1(e.view(-1,128*9 * 12* 12//self.para_reduce))
         e = torch.nn.functional.relu(e)
         e = self.f3(e)
         e = torch.nn.functional.softmax(e, dim=1)

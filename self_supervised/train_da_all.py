@@ -29,7 +29,7 @@ path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
 path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=10, puzzle_num=num_puzzle, more_ri=True)
+md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=1, puzzle_num=num_puzzle, more_ri=True)
 train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 load=False
 
@@ -50,12 +50,12 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%10<5:
+        if i%10<0:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=False,multi=False, g_scale=min(epoch/400,1))
+            net.update_g(ss_only=True,multi=False, g_scale=min(epoch/400,1))
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
             train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
@@ -64,12 +64,12 @@ for epoch in range(total_epochs):
             acc_nm.append(net.accuracy(domain='nm'))
 
             # domain adaptation results
-            train_loss_g.append(net.Loss_g.detach().cpu())
+            # train_loss_g.append(net.Loss_g.detach().cpu())
 
             # dummy results
-            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            # acc_gan.append(net.Loss_rec_nm.detach().cpu())
+            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            acc_gan.append(net.Loss_rec_nm.detach().cpu())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
