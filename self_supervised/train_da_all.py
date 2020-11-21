@@ -50,12 +50,12 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%6<3:
+        if i%6<0:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.5))
+            net.update_g(ss_only=True,multi=False, g_scale=min(epoch/300+0.1,0.5))
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
             train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
@@ -64,12 +64,12 @@ for epoch in range(total_epochs):
             acc_nm.append(net.accuracy(domain='nm'))
 
             # domain adaptation results
-            train_loss_g.append(net.Loss_g.detach().cpu())
+            # train_loss_g.append(net.Loss_g.detach().cpu())
 
             # dummy results
-            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            # acc_gan.append(net.Loss_rec_nm.detach().cpu())
+            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            acc_gan.append(net.Loss_rec_nm.detach().cpu())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
@@ -94,7 +94,7 @@ for epoch in range(total_epochs):
 
     if epoch%100==0:
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
-        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
         save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//50)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//50)
         net.save_net(save_path)

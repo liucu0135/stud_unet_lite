@@ -12,17 +12,17 @@ import gc
 # sample=10:
 #  bench:9.89
 #  pro:8.64
-#  ss only:
+#  ss only:9.23
 
 # sample=20:
 #  bench:9.07
 #  pro:7.69
-#  ss only:
+#  ss only:8.20
 
 # sample=50:
 #  bench:6.38
 #  pro:6.08
-#  ss only:
+#  ss only:6.40
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
