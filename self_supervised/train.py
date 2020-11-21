@@ -76,7 +76,7 @@ for pretext_id in range(1,5):
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=False
+    load=True
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
@@ -100,7 +100,7 @@ for pretext_id in range(1,5):
             # if i % 10 == 0:
             #     print(i, 'of ', len(train_loader), 'done')
             net(data, ss=False)
-            net.update(reg_only=load)
+            net.update(reg_only=not load)
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
