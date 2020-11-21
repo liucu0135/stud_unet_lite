@@ -62,26 +62,26 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-for pretext_id in range(1,5):
+for pretext_id in range(0,2):
     mine = 100
     torch.cuda.empty_cache()
     save_path = './checkpoints/all/self_sup/net_downstream_ssda{}.path'.format(pretext_id)
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
-    sample_rate=4
+    sample_rate=10
     # if name == 'stud':
     #     sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=False
+    load=pretext_id>0
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
-        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(pretext_id)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}'.format(save_id)#net_stack_ssda_mul-dom{}.path
