@@ -69,7 +69,7 @@ for pretext_id in range(1,5):
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
-    sample_rate=20
+    sample_rate=5
     # if name == 'stud':
     #     sample_rate=10
     md_train = myDataset(path_train, aug=True, inch=3, sample_rate=sample_rate)
@@ -92,7 +92,7 @@ for pretext_id in range(1,5):
     net=net.cuda()
         # net.load_net(load_path)
 
-    train_loader = torch.utils.data.DataLoader(md_train, batch_size=10, shuffle=True, num_workers=0)
+    train_loader = torch.utils.data.DataLoader(md_train, batch_size=5, shuffle=True, num_workers=0)
     validation_loader = torch.utils.data.DataLoader(md_test, batch_size=32,num_workers=0)
 
     train_loss = []

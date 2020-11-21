@@ -239,7 +239,7 @@ class SUNET(nn.Module):
         self.multi=multitask
         self.extractor = Extractor(in_ch, para_reduce=para_reduce)
         if multitask:
-            self.classifier=Classifier(bn=True,para_reduce=para_reduce)
+            self.classifier=Classifier(bn=False,para_reduce=para_reduce)
             self.opt_c = optim.Adam(self.classifier.parameters(), lr=0.001, weight_decay=0.001)
             self.scheduler_cls = StepLR(self.opt_c, step_size=1, gamma=0.5)
         if ss:
@@ -254,7 +254,7 @@ class SUNET(nn.Module):
             self.scheduler_ext = StepLR(self.opt_ext, step_size=1, gamma=0.5)
         else:
             if self.ff:
-                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce,bn=True)
+                self.regressor = Regressor_ff(out_ch, para_reduce=para_reduce,bn=False)
             else:
                 self.regressor = Regressor(out_ch, para_reduce=para_reduce)
             self.criterion = nn.MSELoss()
