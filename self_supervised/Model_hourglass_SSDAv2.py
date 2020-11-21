@@ -429,7 +429,7 @@ class SUNET(nn.Module):
     def update_g(self, ss_only=False, multi=False, g_scale=1):
         self.cal_loss_g(ss_only)
         if ss_only:
-            l = self.Loss_rec_nm  +self.Loss_rec_rip+self.Loss_rec_ri
+            l = self.Loss_rec_nm  #+self.Loss_rec_rip+self.Loss_rec_ri
         else:
             l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*g_scale
 
