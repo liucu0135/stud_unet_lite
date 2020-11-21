@@ -101,7 +101,7 @@ for pretext_id in range(1,5):
             # if i % 10 == 0:
             #     print(i, 'of ', len(train_loader), 'done')
             net(data, ss=False)
-            net.update(reg_only=(epoch<100 and load))
+            net.update(reg_only=(epoch<150 and load))
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
@@ -121,7 +121,7 @@ for pretext_id in range(1,5):
                 mine = e
                 net.save_net(save_path)
             train_loss = []
-        if epoch % 100 == 0:
+        if epoch % 50 == 0:
             # print("ep:{}".format(epoch))
             print("ep:{}, T_loss:{:2f},V_Loss:{:2f}, V_Error:{:2f}".format(epoch, tl, vl, e))
         if epoch % 50 == 0:
