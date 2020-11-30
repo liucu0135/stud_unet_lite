@@ -277,16 +277,16 @@ class SUNET(nn.Module):
             e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
             e4_rip=[self.extractor(data_in.cuda()) for data_in in self.input_rip ]
 
-            # mix features
-            mix_label=torch.from_numpy(np.random.randint(0,2,[len(e4_nm)]).astype(np.float)).cuda()
+            # # mix features
+            # mix_label=torch.from_numpy(np.random.randint(0,2,[len(e4_nm)]).astype(np.float)).cuda()
+            #
+            # e4_mix=[n*m+r*(1-m) for n,r,m in zip(e4_nm, e4_ri, mix_label)]
 
-            e4_mix=[n*m+r*(1-m) for n,r,m in zip(e4_nm, e4_ri, mix_label)]
 
 
-
-            self.recon_nm = self.decoder(torch.cat(e4_mix, dim=1))
+            self.recon_nm = self.decoder(torch.cat(e4_nm, dim=1))
             self.recon_rip = self.decoder(torch.cat(e4_rip, dim=1))
-            self.recon_ri = self.decoder(torch.cat(e4_mix, dim=1))
+            self.recon_ri = self.decoder(torch.cat(e4_ri, dim=1))
             # if self.multi:
             #     self.c_pre=self.classifier(_, _, _, e4_nm)
             #     self.c_label = data[0][2].cuda()
@@ -420,7 +420,7 @@ class SUNET(nn.Module):
     def update_g(self, ss_only=False, multi=False, g_scale=1):
         self.cal_loss_g(ss_only)
         if ss_only:
-            l = self.Loss_rec_rip  +self.Loss_rec_ri+self.Loss_rec_nm
+            l = self.Loss_rec_rip  +self.Loss_rec_nm+self.Loss_rec_ri
         else:
             l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*g_scale
 
