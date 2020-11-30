@@ -50,7 +50,7 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%6<0:
+        if i%10<0:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
@@ -94,7 +94,7 @@ for epoch in range(total_epochs):
 
     if epoch%100==0:
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
+        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
         save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//50)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//50)
         net.save_net(save_path)

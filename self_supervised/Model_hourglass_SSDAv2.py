@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as f
 import torch.optim as optim
 from numpy import math
+import numpy as np
 from torch.optim.lr_scheduler import StepLR
 
 from Component import Rse_block
@@ -173,7 +174,7 @@ class Discriminator(nn.Module):
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
         self.f1 = nn.Linear(128* 12* 12//para_reduce, 64//para_reduce)
-        self.f2 = nn.Linear(64//para_reduce, 2)
+        self.f2 = nn.Linear(64//para_reduce, 9)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
         self.para_reduce=para_reduce
@@ -273,8 +274,13 @@ class SUNET(nn.Module):
             self.rec_label_ri = data[1][1].cuda()
 
             e4_nm=[self.extractor(data_in.cuda()) for data_in in self.input_nm ]
-            e4_rip=[self.extractor(data_in.cuda()) for data_in in self.input_rip ]
             e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
+            e4_rip=[self.extractor(data_in.cuda()) for data_in in self.input_rip ]
+
+            # mix features
+            # mix_label=torch.from_numpy(np.random.randint(0,2,[len(e4_nm)]).astype(np.float)).cuda()
+
+            # e4_mix=[n*m+r*(1-m) for n,r,m in zip(e4_nm, e4_ri, mix_label)]
 
 
 
@@ -286,7 +292,6 @@ class SUNET(nn.Module):
             #     self.c_label = data[0][2].cuda()
 
             e4_nm=torch.cat(e4_nm, dim=0)
-            # e4_rip=torch.cat(e4_rip, dim=0)
             e4_ri=torch.cat(e4_ri, dim=0)
             self.d_pre = torch.cat((self.disc(e4_nm), self.disc(e4_ri)), dim=0)
             self.d_label = torch.cat(
@@ -295,6 +300,7 @@ class SUNET(nn.Module):
             self.g_label = torch.cat(
                 (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.ones(e4_nm.shape[0], dtype=torch.long)),
                 dim=0).cuda()
+
         else:
             self.input = data[0].cuda()
             self.label = data[1].cuda()
