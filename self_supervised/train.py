@@ -50,7 +50,7 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-rates=[0,50,20,10,5]
+rates=[1,50,20,10,5]
 for pretext_id in rates:
     mine = 100
     torch.cuda.empty_cache()
@@ -65,7 +65,7 @@ for pretext_id in rates:
     # md_train = myDataset_unlabel('./mat/' + name + '/stud_data_train.mat', aug=False, inch=3)
     md_test = myDataset(path_test, aug=True, inch=3)
     # md_test = myDataset_unlabel('./mat/' + name + '/stud_data_test.mat', aug=False, inch=3)
-    load=pretext_id>0
+    load=pretext_id>1
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
         load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(4)
