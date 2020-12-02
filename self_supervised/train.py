@@ -12,17 +12,20 @@ import gc
 # sample=10:
 #  bench:9.89
 #  pro:8.64
-#  ss only:9.23
+#  ri only:9.23
+#  ss only:9.42
 
 # sample=20:
 #  bench:9.07
 #  pro:7.69
 #  ss only:8.20
+#  ri only:8.23
 
 # sample=50:
 #  bench:6.38
 #  pro:6.08
-#  ss only:6.40
+#  ss only:6.48
+#  ri only:6.40
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
@@ -47,7 +50,7 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-rates=[10,20,50]
+rates=[0,5,10,20,30,50]
 for pretext_id in rates:
     mine = 100
     torch.cuda.empty_cache()
@@ -65,8 +68,8 @@ for pretext_id in rates:
     load=pretext_id>0
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
-        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(pretext_id)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(3)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(4)
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(3)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly_mul-dom9.path'
