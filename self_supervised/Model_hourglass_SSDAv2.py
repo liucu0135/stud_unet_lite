@@ -309,13 +309,12 @@ class SUNET(nn.Module):
 
             e4_nm=torch.cat(e4_nm, dim=0)
             e4_ri=torch.cat(e4_ri, dim=0)
-            self.d_pre = torch.cat((self.disc(e4_nm), self.disc(e4_ri)), dim=0)
+            self.d_pre_n = self.disc(e4_nm)
+            self.d_pre_r = self.disc(e4_ri)
             self.d_label = torch.cat(
                 (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
                 dim=0).cuda()
-            self.g_label = torch.cat(
-                (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.ones(e4_nm.shape[0], dtype=torch.long)),
-                dim=0).cuda()
+            self.g_label = torch.ones(e4_nm.shape[0], dtype=torch.long).cuda()
 
         else:
             self.input = data[0].cuda()
@@ -362,6 +361,7 @@ class SUNET(nn.Module):
             return torch.tensor(-10000.0)
 
     def accuracy_gan(self):
+        self.d_pre=torch.cat((self.d_pre_n, self.d_pre_r), dim=0)
         pred = torch.argmax(self.d_pre, dim=1)
         if self.d_pre.shape[0] == self.d_label.shape[0]:
             accuracy = pred == self.d_label
@@ -391,8 +391,7 @@ class SUNET(nn.Module):
         self.Loss_rec_ri = self.criterion(self.recon_ri, self.rec_label_ri)
         self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
         if not ss_only:
-            bs=self.d_pre.shape[0]//2
-            self.Loss_g = self.criterion(self.d_pre[bs:], self.g_label[bs:])
+            self.Loss_g = self.criterion(self.d_pre_r, self.g_label)
         # if self.multi:
         #     self.cal_loss_c()
 
@@ -429,7 +428,8 @@ class SUNET(nn.Module):
         self.opt_c.step()
 
     def cal_loss_d(self):
-        self.Loss_d = self.criterion(self.d_pre, self.d_label)
+        self.Loss_d = self.criterion(torch.cat((self.d_pre_n, self.d_pre_r), dim=0), self.d_label)  #  label: 111,000
+        # self.Loss_d = self.criterion(torch.cat((self.d_pre_n, self.d_pre_r), dim=0), self.d_label)
 
     def cal_loss_c(self):
         self.Loss_c = torch.nn.functional.cross_entropy(self.c_pre, self.c_label)
@@ -441,8 +441,8 @@ class SUNET(nn.Module):
         else:
             l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm+ self.Loss_g*g_scale
 
-        if multi:
-            l +=self.Loss_c
+        # if multi:
+        #     l +=self.Loss_c
         self.opt_dec.zero_grad()
         self.opt_ext.zero_grad()
         if self.multi:
@@ -453,6 +453,28 @@ class SUNET(nn.Module):
         self.opt_dec.step()
         self.opt_ext.step()
 
+    def update_gd(self, ss_only=False, multi=False, g_scale=1):
+        self.cal_loss_g(ss_only)
+        self.cal_loss_d()
+        if ss_only:
+            l = self.Loss_rec_rip + self.Loss_rec_nm  # +self.Loss_rec_ri
+        else:
+            l = self.Loss_rec_ri + self.Loss_rec_rip + self.Loss_rec_nm + self.Loss_g * g_scale
+
+        # if multi:
+        #     l +=self.Loss_c
+        self.opt_dec.zero_grad()
+        self.opt_ext.zero_grad()
+        if self.multi:
+            self.opt_c.zero_grad()
+        self.opt_dics.zero_grad()
+        self.Loss_d.backward(retain_graph=True)
+        l.backward(retain_graph=True)
+        if self.multi:
+            self.opt_c.step()
+        self.opt_dec.step()
+        self.opt_ext.step()
+        self.opt_dics.step()
         # if not ss_only:
         #     self.update_d()
         # self.extractor.opt_self.step()
