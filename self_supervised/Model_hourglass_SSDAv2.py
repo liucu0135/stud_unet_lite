@@ -468,13 +468,13 @@ class SUNET(nn.Module):
         if self.multi:
             self.opt_c.zero_grad()
         self.opt_dics.zero_grad()
-        self.Loss_d.backward(retain_graph=True)
+        # self.Loss_d.backward(retain_graph=True)
         l.backward(retain_graph=True)
         if self.multi:
             self.opt_c.step()
         self.opt_dec.step()
         self.opt_ext.step()
-        self.opt_dics.step()
+        # self.opt_dics.step()
         # if not ss_only:
         #     self.update_d()
         # self.extractor.opt_self.step()
