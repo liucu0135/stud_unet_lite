@@ -459,7 +459,7 @@ class SUNET(nn.Module):
         if ss_only:
             l = self.Loss_rec_rip + self.Loss_rec_nm  # +self.Loss_rec_ri
         else:
-            l = self.Loss_rec_rip #+ self.Loss_rec_ri + self.Loss_rec_nm + self.Loss_g * g_scale
+            l = self.Loss_rec_rip + self.Loss_rec_nm# + self.Loss_rec_ri + self.Loss_g * g_scale
 
         # if multi:
         #     l +=self.Loss_c
