@@ -26,8 +26,11 @@ stud_names = ['Nut_stud']
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 for name in stud_names:
     checkpoints={'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(2),
-                 'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(2)
+                 'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(20)
                  }
+
+
+
     for type in checkpoints:
         torch.cuda.empty_cache()
         net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=False, para_reduce=4).cuda()
@@ -35,7 +38,7 @@ for name in stud_names:
         path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
         path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
         path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-        md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=20, puzzle_num=num_puzzle, more_ri=True)
+        md_train = myDataset(path_train,path_train_ri, aug=False, sample_rate=100, puzzle_num=num_puzzle, more_ri=True)
         train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 
         net.load_net(checkpoints[type], ext_only=True)
@@ -43,6 +46,7 @@ for name in stud_names:
 
         fns=[]
         frs=[]
+        net.eval()
         for i, data in enumerate(train_loader):
             fn,fr=net(data, feat_only=True)
             fns.append(fn)

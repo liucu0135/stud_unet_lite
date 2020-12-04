@@ -55,7 +55,8 @@ for epoch in range(total_epochs):
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_gd(ss_only=False,multi=False, g_scale=min(epoch/100+0.1,1))
+            net.update_gd(ss_only=False,multi=False, g_scale=0)
+            # net.update_gd(ss_only=False,multi=False, g_scale=min(epoch/100+0.1,1))
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
             # net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.5))
@@ -96,9 +97,9 @@ for epoch in range(total_epochs):
 
 
     if epoch%100==0:
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
+        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
-        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//100)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//100)
         net.save_net(save_path)
     if (epoch+1) % 10 == 0:
