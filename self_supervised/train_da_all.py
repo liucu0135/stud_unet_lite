@@ -29,7 +29,7 @@ path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
 path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
 path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=50, puzzle_num=num_puzzle, more_ri=True)
+md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=20, puzzle_num=num_puzzle, more_ri=True)
 train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 load=False
 
@@ -55,7 +55,7 @@ for epoch in range(total_epochs):
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_g(ss_only=True,multi=False, g_scale=min(epoch/300+0.1,0.5))
+            net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.6))
             train_loss_mn.append(net.Loss_rec_nm.detach().cpu())
             train_loss_ri.append(net.Loss_rec_ri.detach().cpu())
             train_loss_rip.append(net.Loss_rec_rip.detach().cpu())
@@ -93,10 +93,10 @@ for epoch in range(total_epochs):
 
 
     if epoch%100==0:
-        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//50)
-        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//50)
+        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//100)
+        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//100)
         net.save_net(save_path)
     if (epoch+1) % 10 == 0:
         gl = torch.mean(torch.stack(train_loss_g))

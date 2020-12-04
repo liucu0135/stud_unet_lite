@@ -263,8 +263,24 @@ class SUNET(nn.Module):
             self.scheduler_reg = StepLR(self.opt_reg, step_size=1, gamma=0.5)
 
 
-    def forward(self, data, ss=True, ss_only=False):
+    def forward(self, data, ss=True, ss_only=False, feat_only=False):
         # data 0, 1, 2:   normal map, corresponding raw image, another unlabeled raw image
+
+        if feat_only:
+            self.input_nm = data[0][-3]
+            self.rec_label_nm = data[0][1].cuda()
+            self.input_ri = data[1][-3]
+            self.rec_label_ri = data[1][1].cuda()
+
+            # e4_nm=[self.extractor(data_in.cuda()) for data_in in self.input_nm ]
+            # e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
+            e4_nm=self.extractor(self.input_nm.cuda())
+            e4_ri=self.extractor(self.input_nm.cuda())
+            batchsize=self.rec_label_nm.shape[0]
+
+            return e4_nm.view(batchsize, -1).detach().cpu(),e4_ri.view(batchsize, -1).detach().cpu()
+
+
         if ss:
             self.input_nm = data[0][-1]
             self.rec_label_nm = data[0][1].cuda()
@@ -305,6 +321,7 @@ class SUNET(nn.Module):
             self.input = data[0].cuda()
             self.label = data[1].cuda()
             self.c_label=data[2].cuda()
+
             e4 = self.extractor(self.input)
 
             if self.multi:
