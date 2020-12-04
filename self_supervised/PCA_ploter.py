@@ -31,11 +31,13 @@ class PCA_ploter():
             #           horizontalalignment='center',
             #           bbox=dict(alpha=.5, edgecolor='w', facecolor='w'))
         # Reorder the labels to have colors matching the cluster results
-        y = np.choose(y, [1, 2, 0]).astype(np.float)
-
-        plt.scatter(X[:, 0], X[:, 1])
-        plt.ion()
-        plt.show()
+        # y = np.choose(y, [1, 2, 0]).astype(np.float)
+        lx=len(X[:, 0])
+        plt.cla()
+        plt.scatter(X[:lx//2, 0], X[:lx//2, 1], c='b')
+        plt.scatter(X[lx//2:, 0], X[lx//2:, 1], c='g')
+        # plt.ion()
+        # plt.show()
         plt.savefig(save_name)
 
 # PCA_ploter()

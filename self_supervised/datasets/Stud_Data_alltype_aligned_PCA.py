@@ -25,5 +25,5 @@ class myDataset(Data.Dataset):
         return len(self.dataset_ri)
 
     def __getitem__(self, id):
-        id_short=id%len(self.dataset_ri)
+        id_short=(id)%len(self.dataset_ri)
         return self.dataset_nm[id_short], self.dataset_ri[id_short]

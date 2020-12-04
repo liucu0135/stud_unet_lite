@@ -25,8 +25,8 @@ stud_names = ['Nut_stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 for name in stud_names:
-    checkpoints={'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(6),
-                 'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(3)
+    checkpoints={'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(2),
+                 'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(2)
                  }
     for type in checkpoints:
         torch.cuda.empty_cache()
@@ -35,11 +35,10 @@ for name in stud_names:
         path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
         path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
         path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-        md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=10, puzzle_num=num_puzzle, more_ri=True)
+        md_train = myDataset(path_train,path_train_ri, aug=True, sample_rate=20, puzzle_num=num_puzzle, more_ri=True)
         train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
 
         net.load_net(checkpoints[type], ext_only=True)
-        # validation_loader = torch.utils.data.DataLoader(md_test, batch_size=8)
         print('number of batches: {}'.format(len(train_loader)))
 
         fns=[]
@@ -48,6 +47,7 @@ for name in stud_names:
             fn,fr=net(data, feat_only=True)
             fns.append(fn)
             frs.append(fr)
+            print(torch.sum(fn-fr))
         svname='./self_supervised/plot/'+type+'_'+name+'_.png'
         fn=torch.cat(fns, dim=0)
         ln=torch.zeros(fn.shape[0])
