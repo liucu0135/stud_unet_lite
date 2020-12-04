@@ -64,12 +64,12 @@ for epoch in range(total_epochs):
             acc_nm.append(net.accuracy(domain='nm'))
 
             # domain adaptation results
-            # train_loss_g.append(net.Loss_g.detach().cpu())
+            train_loss_g.append(net.Loss_g.detach().cpu())
 
             # dummy results
-            train_loss_g.append(net.Loss_rec_nm.detach().cpu())
-            train_loss_d.append(net.Loss_rec_nm.detach().cpu())
-            acc_gan.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_g.append(net.Loss_rec_nm.detach().cpu())
+            # train_loss_d.append(net.Loss_rec_nm.detach().cpu())
+            # acc_gan.append(net.Loss_rec_nm.detach().cpu())
             # acc_c.append(net.Loss_rec_nm.detach().cpu())
 
         # if i%10<4:
