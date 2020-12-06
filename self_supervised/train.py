@@ -92,7 +92,7 @@ for pretext_id in rates:
             # if i % 10 == 0:
             #     print(i, 'of ', len(train_loader), 'done')
             net(data, ss=False)
-            net.update(reg_only=(epoch<50 and load))
+            net.update(reg_only=(epoch<200 and load))
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
