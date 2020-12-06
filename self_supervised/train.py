@@ -54,7 +54,7 @@ rates=[1,50,20,10,5]
 for pretext_id in rates:
     mine = 100
     torch.cuda.empty_cache()
-    save_path = './checkpoints/all/self_sup/net_downstream_ssda{}.path'.format(pretext_id)
+    save_path = './checkpoints/all/self_sup/net_downstream_ssda{}.path'.format(20)
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_only.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ssda1.path'
     # load_path = './checkpoints/' + name + '/self_sup/net_ss_da0.path'
