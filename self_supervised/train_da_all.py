@@ -126,3 +126,9 @@ for epoch in range(total_epochs):
     #     net.LR_decay(ss=True)
 
 print(' Finished. min_vali_error:', mine)
+
+
+# tensor(-45087.1172)
+# tensor(-31229.9746)
+# tensor(-51130.4453)
+# tensor(-6025.7285)

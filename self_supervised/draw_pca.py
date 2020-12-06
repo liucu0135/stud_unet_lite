@@ -20,17 +20,16 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-stud_names = ['Nut_stud']
-# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+# stud_names = ['Nut_stud']
+stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
+checkpoints={
+             'ss':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path',
+            'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(6),
+             'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(5)
+             }
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
-for name in stud_names:
-    checkpoints={'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(2),
-                 'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(20)
-                 }
-
-
-
+for name in ['all']:
     for type in checkpoints:
         torch.cuda.empty_cache()
         net = SUNET(in_ch=3, out_ch=2,ss=True, multitask=False, para_reduce=4).cuda()
@@ -38,8 +37,8 @@ for name in stud_names:
         path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
         path_train_ri=['./mat/' + name + '/stud_data_RI_train.mat' for name in stud_names]
         path_test_ri=['./mat/' + name + '/stud_data_RI_test.mat' for name in stud_names]
-        md_train = myDataset(path_train,path_train_ri, aug=False, sample_rate=100, puzzle_num=num_puzzle, more_ri=True)
-        train_loader = torch.utils.data.DataLoader(md_train, batch_size=32, shuffle=True, num_workers=0)
+        md_train = myDataset(path_train,path_train_ri, aug=False, sample_rate=20, puzzle_num=num_puzzle, more_ri=True)
+        train_loader = torch.utils.data.DataLoader(md_train, batch_size=20, shuffle=False, num_workers=0)
 
         net.load_net(checkpoints[type], ext_only=True)
         print('number of batches: {}'.format(len(train_loader)))
@@ -51,7 +50,7 @@ for name in stud_names:
             fn,fr=net(data, feat_only=True)
             fns.append(fn)
             frs.append(fr)
-            print(torch.sum(fn-fr))
+            # print(torch.sum(fn-fr))
         svname='./self_supervised/plot/'+type+'_'+name+'_.png'
         fn=torch.cat(fns, dim=0)
         ln=torch.zeros(fn.shape[0])

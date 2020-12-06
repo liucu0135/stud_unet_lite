@@ -274,8 +274,10 @@ class SUNET(nn.Module):
 
             # e4_nm=[self.extractor(data_in.cuda()) for data_in in self.input_nm ]
             # e4_ri=[self.extractor(data_in.cuda()) for data_in in self.input_ri ]
+
             e4_nm=self.extractor(self.input_nm.cuda())
             e4_ri=self.extractor(self.input_ri.cuda())
+
             batchsize=self.rec_label_nm.shape[0]
 
             return e4_nm.view(batchsize, -1).detach().cpu(),e4_ri.view(batchsize, -1).detach().cpu()
@@ -571,8 +573,8 @@ class SUNET(nn.Module):
     def load_net(self, save_path, ext_only=False):
         if ext_only:
             state_dict = torch.load(save_path)
-            # s = {k: state_dict[k] for k in state_dict if 'extractor' in k}
-            # self.extractor.load_state_dict(s, strict=False)
-            self.extractor.load_state_dict(state_dict, strict=False)
+            s = {k[10:]: state_dict[k] for k in state_dict if 'extractor' in k}
+            self.extractor.load_state_dict(s, strict=True)
+            # self.extractor.load_state_dict(state_dict, strict=False)
         else:
             self.load_state_dict(torch.load(save_path))

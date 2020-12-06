@@ -14,7 +14,7 @@ class PCA_ploter():
         # iris = datasets.load_iris()
         # xx = iris.data
         # yy = iris.target
-
+        np.random.seed(5)
         # fig = plt.figure(1, figsize=(4, 3))
         # plt.clf()
         # ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
