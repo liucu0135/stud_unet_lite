@@ -29,7 +29,7 @@ import gc
 
 # trainloader=Data.DataLoader(md,batch_size=16,shuffle=True, num_workers=12)
 torch.cuda.set_device(0)
-total_epochs = 301
+total_epochs = 501
 print_inter = 10
 vali_inter = 200
 validation_split = 0.2
@@ -68,8 +68,8 @@ for pretext_id in rates:
     load=pretext_id>1
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
-        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(20)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(20)
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(3)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssonly9.path'
@@ -92,7 +92,7 @@ for pretext_id in rates:
             # if i % 10 == 0:
             #     print(i, 'of ', len(train_loader), 'done')
             net(data, ss=False)
-            net.update(reg_only=(epoch<100 and load))
+            net.update(reg_only=(epoch<300 and load))
             train_loss.append(net.Loss.detach().cpu())
         error = []
         vl = []
