@@ -24,7 +24,7 @@ stud_names = ['Nut_stud']
 # stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 checkpoints={
-             'ss2':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_8.path',
+             'ssda2':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_8.path',
              'ss':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path',
             'ri':'./checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(6),
              'ssda':'./checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(5)
