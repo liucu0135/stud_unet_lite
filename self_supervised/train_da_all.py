@@ -18,8 +18,8 @@ vali_inter = 10
 validation_split = 0.2
 num_puzzle = 9
 shuffle_dataset = True
-# stud_names = ['Nut_stud']
-stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
+stud_names = ['Nut_stud']
+# stud_names = ['panel_stud', 'Nut_stud', 'T_stud', 'ball_stud', 'stud']
 # num_puzzle=4:  54/22    93/88         67/68     76/81         86/86
 # num_puzzle=9:  22/11    06/02         20/33     35/43         77/75
 
@@ -50,13 +50,13 @@ for epoch in range(total_epochs):
 
     for i, data in enumerate(train_loader):
         net(data)
-        if i%8<0:
+        if i%8<4:
             net.update_d()
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
         else:
-            net.update_gd(ss_only=False,multi=False, g_scale=0)
-            # net.update_gd(ss_only=False,multi=False, g_scale=min(epoch/100+0.1,1))
+            net.update_gd(ss_only=False,multi=False, g_scale=0.2)
+            # net.update_gd(ss_only=False,multi=False, g_scale=min(10/100,0.5))
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
             # net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.5))

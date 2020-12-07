@@ -176,7 +176,7 @@ class Discriminator(nn.Module):
         # self.E2 = Rse_block(64//para_reduce, 64//para_reduce, bn=bn)
         # self.E3 = Rse_block((256+64)//para_reduce, 64//para_reduce, bn=bn, pool=False)
         self.f1 = nn.Linear(128* 12* 12//para_reduce, 64//para_reduce)
-        self.f2 = nn.Linear(64//para_reduce, 9)
+        self.f2 = nn.Linear(64//para_reduce, 2)
         self.clasifier = nn.Sequential(*layers)
         self.num_perm = 2
         self.para_reduce=para_reduce
@@ -311,12 +311,12 @@ class SUNET(nn.Module):
             self.e4_nm=torch.cat(e4_nm, dim=0)
             self.e4_ri=torch.cat(e4_ri, dim=0)
             self.e4_rip=torch.cat(e4_rip, dim=0)
-            self.d_pre_n = self.disc(e4_nm)
-            self.d_pre_r = self.disc(e4_rip)
+            self.d_pre_n = self.disc(self.e4_nm)
+            self.d_pre_r = self.disc(self.e4_rip)
             self.d_label = torch.cat(
-                (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
+                (torch.ones(self.e4_nm.shape[0], dtype=torch.long), torch.zeros(self.e4_nm.shape[0], dtype=torch.long)),
                 dim=0).cuda()
-            self.g_label = torch.ones(e4_nm.shape[0], dtype=torch.long).cuda()
+            self.g_label = torch.ones(self.e4_nm.shape[0], dtype=torch.long).cuda()
 
         else:
             self.input = data[0].cuda()
@@ -394,7 +394,7 @@ class SUNET(nn.Module):
         self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
         if not ss_only:
             self.Loss_g = self.criterion(self.d_pre_r, self.g_label)
-            self.Loss_g += torch.sum((self.e4_nm-self.e4_ri)**2)
+            # self.Loss_g += torch.sum((self.e4_nm-self.e4_ri)**2)
         # if self.multi:
         #     self.cal_loss_c()
 
@@ -462,7 +462,7 @@ class SUNET(nn.Module):
         if ss_only:
             l = self.Loss_rec_rip + self.Loss_rec_nm  # +self.Loss_rec_ri
         else:
-            l = self.Loss_rec_rip + self.Loss_rec_nm# + self.Loss_rec_ri + self.Loss_g * g_scale
+            l = self.Loss_rec_rip + self.Loss_rec_nm + self.Loss_rec_ri + self.Loss_g * g_scale
 
         # if multi:
         #     l +=self.Loss_c
