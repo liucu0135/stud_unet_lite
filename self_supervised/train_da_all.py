@@ -56,7 +56,7 @@ for epoch in range(total_epochs):
             acc_gan.append(net.accuracy_gan())
         else:
             # net.update_gd(ss_only=False,multi=False, g_scale=0.8)
-            net.update_gd(ss_only=False,multi=False, g_scale=min(epoch/300+0.2,1))
+            net.update_gd(ss_only=False,multi=False, g_scale=min(epoch/150+0.2,1))
             train_loss_d.append(net.Loss_d.detach().cpu())
             acc_gan.append(net.accuracy_gan())
             # net.update_g(ss_only=False,multi=False, g_scale=min(epoch/300+0.1,0.5))
@@ -123,8 +123,8 @@ for epoch in range(total_epochs):
         # print(
         #     "ep:{}, nm_l:{:.3f},  acc_nm:{:.3f}".format(
         #         epoch,          nml,acn))
-    # if epoch % 20 == 0:
-    #     net.LR_decay(ss=True)
+    if epoch % 100 == 0:
+        net.LR_decay(ss=True)
 
 print(' Finished. min_vali_error:', mine)
 
