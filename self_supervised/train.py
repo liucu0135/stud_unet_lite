@@ -50,7 +50,7 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-rates=[20]
+rates=[20, 40, 80, 1]
 for pretext_id in rates:
     mine = 100
     torch.cuda.empty_cache()
