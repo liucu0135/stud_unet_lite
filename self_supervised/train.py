@@ -69,7 +69,7 @@ for pretext_id in rates:
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(5)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_{}.path'.format(8)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_{}.path'.format(6)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(3)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
