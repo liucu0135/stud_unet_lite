@@ -308,10 +308,11 @@ class SUNET(nn.Module):
             #     self.c_pre=self.classifier(_, _, _, e4_nm)
             #     self.c_label = data[0][2].cuda()
 
-            e4_nm=torch.cat(e4_nm, dim=0)
-            e4_ri=torch.cat(e4_ri, dim=0)
+            self.e4_nm=torch.cat(e4_nm, dim=0)
+            self.e4_ri=torch.cat(e4_ri, dim=0)
+            self.e4_rip=torch.cat(e4_rip, dim=0)
             self.d_pre_n = self.disc(e4_nm)
-            self.d_pre_r = self.disc(e4_ri)
+            self.d_pre_r = self.disc(e4_rip)
             self.d_label = torch.cat(
                 (torch.ones(e4_nm.shape[0], dtype=torch.long), torch.zeros(e4_nm.shape[0], dtype=torch.long)),
                 dim=0).cuda()
@@ -393,6 +394,7 @@ class SUNET(nn.Module):
         self.Loss_rec_rip = self.criterion(self.recon_rip, self.rec_label_rip)
         if not ss_only:
             self.Loss_g = self.criterion(self.d_pre_r, self.g_label)
+            self.Loss_g += torch.sum((self.e4_nm-self.e4_ri)**2)
         # if self.multi:
         #     self.cal_loss_c()
 

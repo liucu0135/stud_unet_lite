@@ -98,9 +98,10 @@ for epoch in range(total_epochs):
 
     if epoch%100==0:
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(epoch//100)
+        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_{}.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_mul-dom{}.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(epoch//100)
-        save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'.format(epoch//100)
+        # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'.format(epoch//100)
         # save_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm{}.path'.format(epoch//100)
         net.save_net(save_path)
     if (epoch+1) % 10 == 0:
