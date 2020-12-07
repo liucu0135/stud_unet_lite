@@ -113,12 +113,14 @@ class Regressor_ff(nn.Module):
         # layers = [Rse_block(512+256, 128, bn=True, single=True),
         #           Rse_block(128, 64, bn=True, single=True),
         #           Rse_block(64, 8, bn=True, single=True)]
-        layers = [Rse_block(128//para_reduce, 128, bn=bn, single=single,DR=False),
-                  Rse_block(128, 64, pool=False, bn=bn, single=single),
+        layers = [Rse_block(128//para_reduce, 128//para_reduce, bn=bn, single=single,DR=False),
+                  Rse_block(128//para_reduce, 64//para_reduce, pool=False, bn=bn, single=single),
+                  Rse_block(64//para_reduce, 64//para_reduce, bn=bn, single=single),
+                  Rse_block(64//para_reduce, 32//para_reduce, pool=False, bn=bn, single=single),
                   # nn.Dropout2d(0.5),
-                  Rse_block(64, 32, bn=bn, single=single,DR=False)]
+                  Rse_block(32//para_reduce, 8, bn=bn, single=single,DR=False)]
         self.para_reduce=para_reduce
-        self.f1 = nn.Linear(32 * 20 * 20, 4)
+        self.f1 = nn.Linear(8 * 10 * 10, 4)
         self.f2 = nn.Linear(256, 4)
         self.clasifier = nn.Sequential(*layers)
 
@@ -129,7 +131,7 @@ class Regressor_ff(nn.Module):
         e = self.clasifier(e)
         # e = torch.nn.functional.relu(e)
         e = torch.nn.functional.dropout(e, 0.5)
-        e = self.f1(e.view(-1, 32 * 20 * 20))
+        e = self.f1(e.view(-1, 8 * 10 * 10))
         # e = torch.nn.functional.dropout(e,0.2)
         # e = torch.nn.functional.relu(e)
         # e = self.f2(e)
