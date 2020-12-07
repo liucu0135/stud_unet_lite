@@ -50,8 +50,10 @@ tl = []
 
 path_train=['./mat/' + name + '/stud_data_train.mat' for name in stud_names]
 path_test=['./mat/' + name + '/stud_data_test.mat' for name in stud_names]
-rates=[20, 40, 80, 1]
-# bench 8.94 7.74 6.17 3.85
+rates=[10, 20, 40, 80]
+# bench 9.42 7.74 6.17 3.85   r=2
+# pro   8.94 7.39 5.84 3.85   r=2
+
 for pretext_id in rates:
     mine = 100
     torch.cuda.empty_cache()
@@ -70,7 +72,8 @@ for pretext_id in rates:
     net = SUNET(in_ch=3, out_ch=2, ss=False, ff=True, para_reduce=4)
     if load:
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom{}.path'.format(5)
-        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_{}.path'.format(6)
+        load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'
+        # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ssda_mul-dom_l2_{}.path'.format(6)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_both.path'
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_ri{}.path'.format(3)
         # load_path = './checkpoints/' + 'all' + '/self_sup/net_stack_ss_nm4.path'.format(pretext_id)
