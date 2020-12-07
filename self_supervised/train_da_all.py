@@ -123,7 +123,7 @@ for epoch in range(total_epochs):
         # print(
         #     "ep:{}, nm_l:{:.3f},  acc_nm:{:.3f}".format(
         #         epoch,          nml,acn))
-    if epoch % 100 == 0:
+    if epoch % 200 == 0:
         net.LR_decay(ss=True)
 
 print(' Finished. min_vali_error:', mine)
